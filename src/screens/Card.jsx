@@ -222,7 +222,7 @@ export default function Card({ onBack, role = "child" }) {
   const effectiveThemeStyle = hasCustomBackground
     ? themeStyle
     : {
-        backgroundImage: "url(/penguin-bg.jpg)",
+        backgroundImage: "url(./penguin-bg.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       };

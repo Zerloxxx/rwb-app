@@ -4,8 +4,8 @@ import defaultPenguin from "../assets/penguin.png";
 
 const PENGUIN_PREVIEWS = {
   penguin_default: defaultPenguin,
-  penguin_cosmo: "/penguin-cosmo.png",
-  penguin_racer: "/penguin-racer.png",
+  penguin_cosmo: "./penguin-cosmo.png",
+  penguin_racer: "./penguin-racer.png",
 };
 
 export default function RewardCard({ reward, onActivate }) {

@@ -35,16 +35,16 @@ const IconMinus = ({ className = "w-5 h-5" }) => (
 const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"];
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
-  { id: "penguin_cosmo", label: "Космонавт", image: "/penguin-cosmo.png", ownedByDefault: false },
-  { id: "penguin_racer", label: "Гонщик", image: "/penguin-racer.png", ownedByDefault: false },
+  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: false },
+  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: false },
 ];
 
 const BACKGROUNDS = [
   { id: "default", label: "По умолчанию", gradient: "from-[#7a44ff] to-[#b35cff]", ownedByDefault: true },
   { id: "blue_sky", label: "Голубое небо", gradient: "from-blue-400 to-sky-400", ownedByDefault: false },
-  { id: "cosmic_image", label: "Космический", image: "/cosmic-background.jpg", ownedByDefault: false },
-  { id: "sunny_field", label: "Солнечное поле", image: "/sunny-field-background.jpg", ownedByDefault: false },
-  { id: "cyberpunk_city", label: "Киберпанк город", image: "/cyberpunk-city-background.jpg", ownedByDefault: false },
+  { id: "cosmic_image", label: "Космический", image: "./cosmic-background.jpg", ownedByDefault: false },
+  { id: "sunny_field", label: "Солнечное поле", image: "./sunny-field-background.jpg", ownedByDefault: false },
+  { id: "cyberpunk_city", label: "Киберпанк город", image: "./cyberpunk-city-background.jpg", ownedByDefault: false },
 ];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
@@ -477,6 +477,10 @@ export default function Piggy({ onBack, role = "child" }) {
     if (!background) return "from-[#7a44ff] to-[#b35cff]";
     
     if (background.image) {
+      // Проверяем, что изображение загружается
+      const img = new Image();
+      img.onerror = () => console.warn(`Не удалось загрузить изображение: ${background.image}`);
+      img.src = background.image;
       return `bg-[url('${background.image}')] bg-cover bg-center`;
     }
     return background.gradient;
@@ -915,7 +919,10 @@ export default function Piggy({ onBack, role = "child" }) {
     // Родитель всегда создает общие копилки, ребенок - свои
     const owner = role === "parent" ? "family" : "child";
     const name = draft.name.trim();
-    if (!name) return;
+    if (!name) {
+      console.warn('Имя копилки не может быть пустым');
+      return;
+    }
 
     const newPiggy = {
       id: makeId(),
@@ -928,10 +935,16 @@ export default function Piggy({ onBack, role = "child" }) {
       createdAt: new Date().toISOString(),
     };
 
-    setState((prev) => ({
-      ...prev,
-      piggies: [...prev.piggies, newPiggy],
-    }));
+    console.log('Создание копилки:', newPiggy);
+
+    setState((prev) => {
+      const newState = {
+        ...prev,
+        piggies: [...prev.piggies, newPiggy],
+      };
+      console.log('Новое состояние:', newState);
+      return newState;
+    });
 
     // Триггер миссии для создания первой копилки
     triggerMission("story_first_piggy", 1);

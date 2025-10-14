@@ -127,18 +127,28 @@ export const loadPiggyState = () => {
 
 export const savePiggyState = (state) => {
   if (!ensureWindow()) {
+    console.warn('localStorage недоступен');
     return;
   }
 
   try {
     const normalized = normalizeState(state);
-    console.log('Сохранение состояния после удаления:', normalized);
-    console.log('parentCardBalance после удаления:', normalized.parentCardBalance);
     const payload = JSON.stringify({ ...normalized, version: 4 });
     window.localStorage.setItem(STORAGE_KEYS.current, payload);
     window.dispatchEvent(new CustomEvent(PIGGY_UPDATED_EVENT, { detail: normalized }));
+    console.log('Состояние сохранено успешно');
   } catch (error) {
     console.error('Ошибка сохранения состояния:', error);
+    // Попробуем очистить localStorage и сохранить заново
+    try {
+      window.localStorage.clear();
+      const normalized = normalizeState(state);
+      const payload = JSON.stringify({ ...normalized, version: 4 });
+      window.localStorage.setItem(STORAGE_KEYS.current, payload);
+      console.log('Состояние сохранено после очистки localStorage');
+    } catch (retryError) {
+      console.error('Критическая ошибка localStorage:', retryError);
+    }
   }
 };
 

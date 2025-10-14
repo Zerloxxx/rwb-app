@@ -94,7 +94,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
         {/* Карточка баланса родителя с фоном */}
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"
-          style={{ backgroundImage: "url(/penguin-bg.jpg)", backgroundSize: "cover", backgroundPosition: "center", minHeight: 200 }}
+          style={{ backgroundImage: "url(./penguin-bg.jpg)", backgroundSize: "cover", backgroundPosition: "center", minHeight: 200 }}
         >
           <div className="absolute inset-0 bg-black/35" />
           <div className="relative flex min-h-[200px] flex-col justify-between">

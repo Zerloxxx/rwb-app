@@ -15,22 +15,22 @@ export const CARD_THEMES = {
   },
   card_antarctic: {
     label: "Антарктида",
-    image: "/penguin-bg.jpg",
+    image: "./penguin-bg.jpg",
     style: { color: "#fff" },
   },
   card_neon: {
     label: "Неон",
-    image: localNeon || "/card-neon.jpg", // src fallback или public
+    image: localNeon || "./card-neon.jpg", // src fallback или public
     style: { color: "#fff" },
   },
   rare_gold_card: {
     label: "Золотая карта WB",
-    image: localGold || "/card-gold.jpg", // src fallback или public
+    image: localGold || "./card-gold.jpg", // src fallback или public
     style: { color: "#1b1300" },
   },
   card_new_bg: {
     label: "Новый фон",
-    image: localNew || "/card-new.jpg",
+    image: localNew || "./card-new.jpg",
     style: { color: "#fff" },
   },
   card_russ_blue: {

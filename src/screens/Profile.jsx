@@ -7,8 +7,8 @@ import ChildPermissions from "../components/ChildPermissions";
 
 const AVATARS = [
   { id: "penguin_default", label: "Обычный", src: defaultPenguin },
-  { id: "penguin_racer", label: "Гонщик", src: "/penguin-racer.png" },
-  { id: "penguin_cosmo", label: "Космонавт", src: "/penguin-cosmo.png" },
+  { id: "penguin_racer", label: "Гонщик", src: "./penguin-racer.png" },
+  { id: "penguin_cosmo", label: "Космонавт", src: "./penguin-cosmo.png" },
 ];
 
 const THEMES = [
@@ -151,7 +151,7 @@ export default function Profile() {
         <>
           <section className="px-5 pt-5">
             {/* Приветствие и аватар */}
-            <div className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30" style={{ backgroundImage: "url(/profile-space.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
+            <div className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30" style={{ backgroundImage: "url(./profile-space.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-white/10">
               <img src={currentAvatarSrc} alt="Пингвин" className="h-full w-full object-contain" />

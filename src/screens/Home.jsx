@@ -64,7 +64,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
   const roleLabel = role === "parent" ? "Родитель" : "Ребёнок";
   const { balance, active } = useCoins();
   const homeCardStyle = getCardThemeStyle(active?.cardTheme) || {
-    backgroundImage: "url(/penguin-bg.jpg)",
+    backgroundImage: "url(./penguin-bg.jpg)",
     backgroundSize: "cover",
     backgroundPosition: "center",
   };

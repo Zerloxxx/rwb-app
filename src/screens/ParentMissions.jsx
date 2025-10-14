@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useMissions } from '../context/MissionsContext';
-import { useCoins } from '../context/CoinsContext';
 import { transferParentToChild } from '../utils/piggyStorage';
 
 export default function ParentMissions() {
@@ -12,7 +11,6 @@ export default function ParentMissions() {
     completeMission,
     isMissionCompleted
   } = useMissions();
-  // useCoins hook not needed for this component
 
   const [activeTab, setActiveTab] = useState('overview');
   const [newMission, setNewMission] = useState({

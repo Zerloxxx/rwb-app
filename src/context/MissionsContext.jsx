@@ -236,7 +236,7 @@ export const MissionsProvider = ({ children }) => {
   // Сохраняем состояние при изменениях
   useEffect(() => {
     saveMissionsState(state);
-  }, [state.progress, state.completedMissions, state.level, state.xp, state.totalXp, state.dailyReset, state.weeklyReset]);
+  }, [state.progress, state.completedMissions, state.customMissions, state.level, state.xp, state.totalXp, state.dailyReset, state.weeklyReset]);
 
   // Проверяем необходимость сброса ежедневных и еженедельных миссий
   useEffect(() => {

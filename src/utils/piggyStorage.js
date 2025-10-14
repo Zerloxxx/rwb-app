@@ -27,7 +27,7 @@ const debouncedSave = (state) => {
   
   saveTimeout = setTimeout(async () => {
     if (pendingState) {
-      await savePiggyState(pendingState);
+      await savePiggyStateImmediate(pendingState);
       pendingState = null;
     }
   }, 300); // 300ms задержка

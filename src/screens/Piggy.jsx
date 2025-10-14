@@ -337,6 +337,45 @@ export default function Piggy({ onBack, role = "child" }) {
       console.error('❌ Не удалось восстановить состояние:', error);
     }
   }, []);
+
+  // Синхронизация состояния при смене роли
+  useEffect(() => {
+    console.log('🔄 Синхронизация состояния при смене роли:', role);
+    try {
+      const currentState = loadPiggyState();
+      console.log('📊 Загруженное состояние:', {
+        piggiesCount: currentState.piggies?.length || 0,
+        childPiggies: currentState.piggies?.filter(p => p.owner === 'child').length || 0,
+        familyPiggies: currentState.piggies?.filter(p => p.owner === 'family').length || 0,
+        cardBalance: currentState.cardBalance,
+        parentCardBalance: currentState.parentCardBalance
+      });
+      
+      if (validatePiggyState(currentState)) {
+        setState(currentState);
+        console.log('✅ Состояние синхронизировано для роли:', role);
+      } else {
+        console.warn('⚠️ Состояние некорректно, восстанавливаем...');
+        recoverState();
+      }
+    } catch (error) {
+      console.error('❌ Ошибка синхронизации состояния:', error);
+      recoverState();
+    }
+  }, [role, recoverState]);
+
+  // Слушатель событий для синхронизации состояния между вкладками
+  useEffect(() => {
+    const handleStorageUpdate = (event) => {
+      if (event.detail) {
+        console.log('🔄 Получено обновление состояния из другого окна/вкладки');
+        setState(event.detail);
+      }
+    };
+
+    window.addEventListener(PIGGY_UPDATED_EVENT, handleStorageUpdate);
+    return () => window.removeEventListener(PIGGY_UPDATED_EVENT, handleStorageUpdate);
+  }, []);
   
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
@@ -396,6 +435,12 @@ export default function Piggy({ onBack, role = "child" }) {
     let childSum = 0;
     let familySum = 0;
 
+    console.log('📊 Обработка копилок для totals:', {
+      totalPiggies: piggies.length,
+      role,
+      piggies: piggies.map(p => ({ id: p.id, name: p.name, owner: p.owner }))
+    });
+
     piggies.forEach((item) => {
       const owner = item.owner === "family" ? "family" : "child";
       const amount = Math.max(0, Number(item.amount) || 0);
@@ -411,14 +456,23 @@ export default function Piggy({ onBack, role = "child" }) {
       }
     });
 
-    return {
+    const result = {
       childList,
       familyList,
       childTotal: childSum,
       familyTotal: familySum,
       total: childSum + familySum,
     };
-  }, [piggies]);
+
+    console.log('📊 Результат totals:', {
+      childListCount: result.childList.length,
+      familyListCount: result.familyList.length,
+      childTotal: result.childTotal,
+      familyTotal: result.familyTotal
+    });
+
+    return result;
+  }, [piggies, role]);
 
   const [ownerFilter, setOwnerFilter] = useState(() => (role === "parent" ? "family" : "child"));
   const [amountModal, setAmountModal] = useState({ open: false, id: null, mode: "deposit" });

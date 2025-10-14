@@ -66,7 +66,7 @@ function AppInner() {
       return;
     }
     setRole(nextRole);
-    setScreen("home");
+    // Не сбрасываем экран при смене роли, чтобы пользователь остался на том же экране
     closeRoleModal();
   };
 

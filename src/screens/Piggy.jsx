@@ -1,6 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import defaultPenguin from "../assets/penguin.png";
-import { loadPiggyState, savePiggyState, PIGGY_UPDATED_EVENT } from "../utils/piggyStorage";
+import { loadPiggyState, savePiggyState, savePiggyStateImmediate, PIGGY_UPDATED_EVENT, recoverPiggyState, validatePiggyState, safeSavePiggyState } from "../utils/piggyStorage";
 import { useProfile } from "../context/ProfileContext";
 import { appendStoredTransaction } from "../utils/spendsStorage";
 import { useCoins } from "../context/CoinsContext";
@@ -307,10 +307,37 @@ const CelebrationBurst = () => (
 
 
 export default function Piggy({ onBack, role = "child" }) {
-  const [state, setState] = useState(loadPiggyState);
+  const [state, setState] = useState(() => {
+    try {
+      const loadedState = loadPiggyState();
+      if (validatePiggyState(loadedState)) {
+        return loadedState;
+      } else {
+        console.warn('⚠️ Загруженное состояние некорректно, восстанавливаем...');
+        return recoverPiggyState();
+      }
+    } catch (error) {
+      console.error('❌ Ошибка загрузки состояния:', error);
+      return recoverPiggyState();
+    }
+  });
+  
   const { unlockAchievement, gainXp, profile } = useProfile();
   const { ownedRewards, isOwned, activateReward, active } = useCoins();
   const { triggerMission } = useMissions();
+  
+  // Функция для восстановления состояния при критических ошибках
+  const recoverState = useCallback(() => {
+    try {
+      console.log('🔄 Восстановление состояния...');
+      const recoveredState = recoverPiggyState();
+      setState(recoveredState);
+      console.log('✅ Состояние восстановлено');
+    } catch (error) {
+      console.error('❌ Не удалось восстановить состояние:', error);
+    }
+  }, []);
+  
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState(() => {
@@ -500,33 +527,42 @@ export default function Piggy({ onBack, role = "child" }) {
   };
 
   const moveFunds = (id, mode, rawAmount) => {
-    const amount = clampPositive(rawAmount);
-    if (!id || amount <= 0) {
-      return null;
-    }
-
-    let transfer = null;
-
-    setState((prev) => {
-      const target = prev.piggies.find((item) => item.id === id);
-      if (!target) {
-        transfer = { status: "missing" };
-        return prev;
+    try {
+      const amount = clampPositive(rawAmount);
+      if (!id || amount <= 0) {
+        console.warn('⚠️ Некорректные параметры для moveFunds:', { id, mode, rawAmount });
+        return null;
       }
 
-      const owner = target.owner === "family" ? "family" : "child";
-      if (mode === "withdraw" && role === "parent" && owner === "child") {
-        transfer = { status: "forbidden", piggy: target };
-        return prev;
-      }
+      let transfer = null;
 
-      const currentAmount = Math.max(0, Number(target.amount) || 0);
-      // Родитель использует свой баланс, ребенок - свой
-      const currentCard = role === "parent" 
-        ? Math.max(0, Number(prev.parentCardBalance) || 0)
-        : Math.max(0, Number(prev.cardBalance) || 0);
-      const goal = Math.max(0, Number(target.goal) || 0);
-      const remainingCapacity = goal > 0 ? Math.max(0, goal - currentAmount) : Number.POSITIVE_INFINITY;
+      setState((prev) => {
+        try {
+          const target = prev.piggies.find((item) => item.id === id);
+          if (!target) {
+            console.warn('⚠️ Копилка не найдена:', id);
+            transfer = { status: "missing" };
+            return prev;
+          }
+
+          const owner = target.owner === "family" ? "family" : "child";
+          if (mode === "withdraw" && role === "parent" && owner === "child") {
+            console.warn('⚠️ Родитель не может снимать с детских копилок');
+            transfer = { status: "forbidden", piggy: target };
+            return prev;
+          }
+
+          const currentAmount = Math.max(0, Number(target.amount) || 0);
+          // Родитель использует свой баланс, ребенок - свой
+          const currentCard = role === "parent" 
+            ? Math.max(0, Number(prev.parentCardBalance) || 0)
+            : Math.max(0, Number(prev.cardBalance) || 0);
+          const goal = Math.max(0, Number(target.goal) || 0);
+          const remainingCapacity = goal > 0 ? Math.max(0, goal - currentAmount) : Number.POSITIVE_INFINITY;
+
+          console.log('🔄 moveFunds:', { 
+            id, mode, amount, currentAmount, currentCard, goal, remainingCapacity, role 
+          });
 
 
       if (mode === "withdraw") {
@@ -593,29 +629,44 @@ export default function Piggy({ onBack, role = "child" }) {
           ),
         };
       }
-    });
-
-    if (transfer?.status === "insufficient" && typeof window !== "undefined") {
-      window.alert("Недостаточно средст на карте");
-    }
-
-    if (transfer?.status === "full" && typeof window !== "undefined") {
-      window.alert("Цель уже достигла максимальной суммы");
-    }
-
-    if (transfer?.status === "success" && transfer.type === "deposit") {
-      appendStoredTransaction({
-        amount: transfer.amount,
-        category: "other",
-        note: `                "${transfer.piggy.name || "            "}"`,
-      });
       
-      // Триггеры миссий
-      triggerMission("daily_piggy_deposit", 1);
-      triggerMission("weekly_savings", transfer.amount);
+      return prev;
+    } catch (error) {
+      console.error('❌ Ошибка в setState moveFunds:', error);
+      transfer = { status: "error", error: error.message };
+      return prev;
     }
+  });
 
-    return transfer;
+      if (transfer?.status === "insufficient" && typeof window !== "undefined") {
+        window.alert("Недостаточно средств на карте");
+      }
+
+      if (transfer?.status === "full" && typeof window !== "undefined") {
+        window.alert("Цель уже достигла максимальной суммы");
+      }
+
+      if (transfer?.status === "success" && transfer.type === "deposit") {
+        appendStoredTransaction({
+          amount: transfer.amount,
+          category: "other",
+          note: `                "${transfer.piggy.name || "            "}"`,
+        });
+        
+        // Триггеры миссий
+        triggerMission("daily_piggy_deposit", 1);
+        triggerMission("weekly_savings", transfer.amount);
+      }
+
+      if (transfer?.status === "error") {
+        console.error('❌ Ошибка в moveFunds:', transfer.error);
+      }
+
+      return transfer;
+    } catch (error) {
+      console.error('❌ Критическая ошибка в moveFunds:', error);
+      return { status: "error", error: error.message };
+    }
   };
 
   const handleQuickAdd = (id, amount) => {
@@ -915,42 +966,78 @@ export default function Piggy({ onBack, role = "child" }) {
     setCreateOpen(true);
   };
 
-  const handleCreate = () => {
-    // Родитель всегда создает общие копилки, ребенок - свои
-    const owner = role === "parent" ? "family" : "child";
-    const name = draft.name.trim();
-    if (!name) {
-      console.warn('Имя копилки не может быть пустым');
-      return;
-    }
+  const handleCreate = async () => {
+    try {
+      // Родитель всегда создает общие копилки, ребенок - свои
+      const owner = role === "parent" ? "family" : "child";
+      const name = draft.name.trim();
+      
+      // Валидация
+      if (!name) {
+        console.warn('⚠️ Имя копилки не может быть пустым');
+        return;
+      }
+      
+      if (name.length > 60) {
+        console.warn('⚠️ Имя копилки слишком длинное (максимум 60 символов)');
+        return;
+      }
 
-    const newPiggy = {
-      id: makeId(),
-      name,
-      goal: Math.max(0, Number(draft.goal) || 0),
-      amount: 0,
-      color: draft.color,
-      background: "default",
-      owner,
-      createdAt: new Date().toISOString(),
-    };
+      const goal = Math.max(0, Number(draft.goal) || 0);
+      if (goal > 1000000) {
+        console.warn('⚠️ Цель слишком большая (максимум 1,000,000)');
+        return;
+      }
 
-    console.log('Создание копилки:', newPiggy);
-
-    setState((prev) => {
-      const newState = {
-        ...prev,
-        piggies: [...prev.piggies, newPiggy],
+      const newPiggy = {
+        id: makeId(),
+        name,
+        goal,
+        amount: 0,
+        color: draft.color || "#7c3aed",
+        background: "default",
+        owner,
+        createdAt: new Date().toISOString(),
       };
-      console.log('Новое состояние:', newState);
-      return newState;
-    });
 
-    // Триггер миссии для создания первой копилки
-    triggerMission("story_first_piggy", 1);
+      console.log('🔄 Создание копилки:', newPiggy);
 
-    setDraft(initialDraft(owner));
-    setCreateOpen(false);
+      // Проверяем, что копилка с таким именем не существует
+      const existingPiggy = state.piggies.find(p => p.name.toLowerCase() === name.toLowerCase());
+      if (existingPiggy) {
+        console.warn('⚠️ Копилка с таким именем уже существует');
+        return;
+      }
+
+      // Обновляем состояние
+      setState((prev) => {
+        const newState = {
+          ...prev,
+          piggies: [...prev.piggies, newPiggy],
+        };
+        console.log('✅ Новое состояние:', newState);
+        
+        // Валидируем новое состояние
+        if (!validatePiggyState(newState)) {
+          console.error('❌ Некорректное состояние после создания копилки');
+          recoverState();
+          return prev;
+        }
+        
+        return newState;
+      });
+
+      // Триггер миссии для создания первой копилки
+      triggerMission("story_first_piggy", 1);
+
+      // Сбрасываем форму
+      setDraft(initialDraft(owner));
+      setCreateOpen(false);
+      
+      console.log('✅ Копилка успешно создана');
+    } catch (error) {
+      console.error('❌ Ошибка при создании копилки:', error);
+    }
   };
 
   const ownerTabs = [

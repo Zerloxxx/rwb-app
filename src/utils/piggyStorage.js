@@ -14,6 +14,25 @@ const DEFAULT_STATE = {
 
 const ensureWindow = () => typeof window !== "undefined" && typeof window.localStorage !== "undefined";
 
+// Debounce механизм для предотвращения частых сохранений
+let saveTimeout = null;
+let pendingState = null;
+
+const debouncedSave = (state) => {
+  pendingState = state;
+  
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+  }
+  
+  saveTimeout = setTimeout(async () => {
+    if (pendingState) {
+      await savePiggyState(pendingState);
+      pendingState = null;
+    }
+  }, 300); // 300ms задержка
+};
+
 const makeId = () => "piggy_" + Math.random().toString(36).slice(2, 10);
 
 const clampNumber = (value) => {
@@ -125,31 +144,84 @@ export const loadPiggyState = () => {
   return { ...DEFAULT_STATE };
 };
 
-export const savePiggyState = (state) => {
+// Retry механизм для localStorage операций
+const retryOperation = async (operation, maxRetries = 3, delay = 50) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return operation();
+    } catch (error) {
+      console.warn(`⚠️ Попытка ${i + 1} не удалась:`, error.message);
+      if (i === maxRetries - 1) {
+        throw error;
+      }
+      // Экспоненциальная задержка
+      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+    }
+  }
+};
+
+// Проверка доступности localStorage
+const isLocalStorageHealthy = () => {
+  try {
+    const test = '__localStorage_health_check__';
+    window.localStorage.setItem(test, test);
+    window.localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+// Немедленное сохранение (для критических операций)
+export const savePiggyStateImmediate = async (state) => {
   if (!ensureWindow()) {
     console.warn('localStorage недоступен');
-    return;
+    return false;
+  }
+
+  if (!isLocalStorageHealthy()) {
+    console.error('localStorage не работает корректно');
+    return false;
   }
 
   try {
     const normalized = normalizeState(state);
     const payload = JSON.stringify({ ...normalized, version: 4 });
-    window.localStorage.setItem(STORAGE_KEYS.current, payload);
+    
+    // Попытка сохранить с retry
+    await retryOperation(() => {
+      window.localStorage.setItem(STORAGE_KEYS.current, payload);
+    });
+    
     window.dispatchEvent(new CustomEvent(PIGGY_UPDATED_EVENT, { detail: normalized }));
-    console.log('Состояние сохранено успешно');
+    console.log('✅ Состояние сохранено немедленно');
+    return true;
   } catch (error) {
-    console.error('Ошибка сохранения состояния:', error);
-    // Попробуем очистить localStorage и сохранить заново
+    console.error('❌ Ошибка немедленного сохранения:', error);
+    
+    // Последняя попытка - очистка localStorage
     try {
+      console.log('🔄 Попытка очистки localStorage...');
       window.localStorage.clear();
+      
       const normalized = normalizeState(state);
       const payload = JSON.stringify({ ...normalized, version: 4 });
       window.localStorage.setItem(STORAGE_KEYS.current, payload);
-      console.log('Состояние сохранено после очистки localStorage');
+      
+      window.dispatchEvent(new CustomEvent(PIGGY_UPDATED_EVENT, { detail: normalized }));
+      console.log('✅ Состояние сохранено после очистки localStorage');
+      return true;
     } catch (retryError) {
-      console.error('Критическая ошибка localStorage:', retryError);
+      console.error('❌ Критическая ошибка localStorage:', retryError);
+      return false;
     }
   }
+};
+
+// Debounced сохранение (для обычных операций)
+export const savePiggyState = (state) => {
+  debouncedSave(state);
+  return true; // Всегда возвращаем true для debounced операций
 };
 
 const sumAmount = (list = []) => list.reduce((sum, piggy) => sum + clampNumber(piggy.amount), 0);
@@ -175,7 +247,7 @@ export const getPiggyOverview = (state) => {
 };
 
 // Перевод денег с карты родителя на карту ребёнка (для наград миссий)
-export const transferParentToChild = (amount) => {
+export const transferParentToChild = async (amount) => {
   if (!ensureWindow()) return false;
   const safeAmount = clampNumber(amount);
   if (safeAmount <= 0) return false;
@@ -187,8 +259,8 @@ export const transferParentToChild = (amount) => {
     parentCardBalance: parent - safeAmount,
     cardBalance: clampNumber((state.cardBalance ?? 0) + safeAmount),
   };
-  savePiggyState(next);
-  return true;
+  const success = await savePiggyStateImmediate(next);
+  return success;
 };
 
 export const updatePiggy = (state, id, updater) => {
@@ -206,5 +278,70 @@ export const appendPiggy = (state, piggy) => ({
   ...state,
   piggies: [...state.piggies, normalizePiggy(piggy)],
 });
+
+// Fallback механизм для восстановления состояния
+export const recoverPiggyState = () => {
+  if (!ensureWindow()) {
+    console.warn('localStorage недоступен для восстановления');
+    return { ...DEFAULT_STATE };
+  }
+
+  try {
+    // Пытаемся загрузить из всех возможных ключей
+    const keys = [STORAGE_KEYS.current, ...STORAGE_KEYS.legacy];
+    
+    for (const key of keys) {
+      try {
+        const raw = window.localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const state = normalizeState(parsed);
+          console.log(`✅ Восстановлено состояние из ключа: ${key}`);
+          return state;
+        }
+      } catch (error) {
+        console.warn(`⚠️ Не удалось восстановить из ключа ${key}:`, error);
+        continue;
+      }
+    }
+    
+    console.log('🔄 Создано новое состояние по умолчанию');
+    return { ...DEFAULT_STATE };
+  } catch (error) {
+    console.error('❌ Критическая ошибка восстановления:', error);
+    return { ...DEFAULT_STATE };
+  }
+};
+
+// Проверка целостности состояния
+export const validatePiggyState = (state) => {
+  if (!state || typeof state !== 'object') {
+    return false;
+  }
+  
+  if (!Array.isArray(state.piggies)) {
+    return false;
+  }
+  
+  if (typeof state.cardBalance !== 'number' || state.cardBalance < 0) {
+    return false;
+  }
+  
+  if (typeof state.parentCardBalance !== 'number' || state.parentCardBalance < 0) {
+    return false;
+  }
+  
+  return true;
+};
+
+// Безопасное сохранение с валидацией
+export const safeSavePiggyState = async (state) => {
+  if (!validatePiggyState(state)) {
+    console.error('❌ Некорректное состояние для сохранения');
+    return false;
+  }
+  
+  return await savePiggyStateImmediate(state);
+};
 
 export const STORAGE_KEY_CURRENT = STORAGE_KEYS.current;

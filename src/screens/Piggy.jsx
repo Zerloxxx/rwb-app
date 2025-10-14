@@ -35,6 +35,14 @@ const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
 ];
+
+const BACKGROUNDS = [
+  { id: "default", label: "По умолчанию", gradient: "from-[#7a44ff] to-[#b35cff]", ownedByDefault: true },
+  { id: "blue_sky", label: "Голубое небо", gradient: "from-blue-400 to-sky-400", ownedByDefault: false },
+  { id: "cosmic_image", label: "Космический", image: "./cosmic-background.jpg", ownedByDefault: false },
+  { id: "sunny_field", label: "Солнечное поле", image: "./sunny-field-background.jpg", ownedByDefault: false },
+  { id: "cyberpunk_city", label: "Киберпанк город", image: "./cyberpunk-city-background.jpg", ownedByDefault: false },
+];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
 const makeId = () =>
@@ -46,6 +54,7 @@ const initialDraft = (owner) => ({
   name: "",
   goal: 5000,
   color: COLORS[0],
+  background: "default",
   owner,
 });
 
@@ -318,6 +327,7 @@ export default function Piggy({ onBack, role = "child" }) {
   const [confirmModal, setConfirmModal] = useState({ open: false, id: null });
   const [autoModal, setAutoModal] = useState({ open: false, id: null, initial: 0 });
   const [createOpen, setCreateOpen] = useState(false);
+  const [piggyBackgroundModal, setPiggyBackgroundModal] = useState({ open: false, id: null });
   const [draft, setDraft] = useState(() => initialDraft(role === "parent" ? "family" : ownerFilter));
   const [celebrations, setCelebrations] = useState(() => []);
   const celebrationTimersRef = useRef(new Map());
@@ -369,6 +379,17 @@ export default function Piggy({ onBack, role = "child" }) {
 
 
   const filteredPiggies = ownerFilter === "family" ? totals.familyList : totals.childList;
+  
+  const getPiggyBackground = (piggy) => {
+    const backgroundId = piggy.background || "default";
+    const background = BACKGROUNDS.find(bg => bg.id === backgroundId);
+    if (!background) return "from-[#7a44ff] to-[#b35cff]";
+    
+    if (background.image) {
+      return `bg-[url('${background.image}')] bg-cover bg-center`;
+    }
+    return background.gradient;
+  };
 
   const summaryChips = [
     { label: "Копилки ребёнка", value: fmtRub(totals.childTotal) },
@@ -718,6 +739,9 @@ export default function Piggy({ onBack, role = "child" }) {
     if (role !== "parent" && ownerFilter === "family") {
       return "Новую общую цель может создать родитель";
     }
+    if (role === "parent" && ownerFilter === "child") {
+      return "Эти цели добавляются в приложении ребёнка";
+    }
     return null;
   })();
 
@@ -739,6 +763,7 @@ export default function Piggy({ onBack, role = "child" }) {
       goal: Math.max(0, Number(draft.goal) || 0),
       amount: 0,
       color: draft.color,
+      background: draft.background || "default",
       owner,
       createdAt: new Date().toISOString(),
     };
@@ -862,8 +887,8 @@ export default function Piggy({ onBack, role = "child" }) {
             ? "text-xs font-semibold text-fuchsia-300"
             : "text-xs font-semibold text-white/50";
 
-          return (
-            <div key={piggy.id} className="relative overflow-hidden rounded-[18px] bg-[#131318] p-4 ring-1 ring-white/5">
+            return (
+              <div key={piggy.id} className={`relative overflow-hidden rounded-[18px] ${getPiggyBackground(piggy).startsWith('bg-[url') ? getPiggyBackground(piggy) : `bg-gradient-to-r ${getPiggyBackground(piggy)}`} p-4 ring-1 ring-white/5`}>
               {isCelebrating ? <CelebrationBurst /> : null}
               <div className={isCompleted ? "pointer-events-none opacity-35" : ""}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -890,14 +915,26 @@ export default function Piggy({ onBack, role = "child" }) {
                           {piggy.owner === "family" ? "Общая" : "Цель ребёнка"}
                         </span>
                       )}
-                      {editable && (
+                      {editable && role !== "parent" && (
+                        <button
+                          type="button"
+                          onClick={() => setPiggyBackgroundModal({ open: true, id: piggy.id })}
+                          className="ml-2 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-white/80 transition-all hover:from-purple-500/30 hover:to-pink-500/30 hover:text-white hover:scale-105 active:scale-95"
+                          title="Выбрать фон"
+                        >
+                          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </button>
+                      )}
+                      {editable && !(role === "parent" && piggy.owner === "child") && (
                         <button
                           type="button"
                           onClick={() => setConfirmModal({ open: true, id: piggy.id })}
-                          className="ml-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/70 transition hover:bg-white/10"
+                          className="ml-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white/5 text-white/70 transition-all hover:bg-red-500/20 hover:text-red-300 hover:scale-105 active:scale-95"
                           title="Удалить цель"
                         >
-                          <IconTrash className="h-4 w-4" />
+                          <IconTrash className="h-5 w-5" />
                         </button>
                       )}
                     </div>
@@ -1080,6 +1117,41 @@ export default function Piggy({ onBack, role = "child" }) {
           </button>
           <button type="button" onClick={handleCreate} className="flex-1 rounded-xl bg-white py-2 font-semibold text-black">
             Создать
+          </button>
+        </div>
+      </Modal>
+
+      {/* Модальное окно выбора фона копилки */}
+      <Modal open={piggyBackgroundModal.open} onClose={() => setPiggyBackgroundModal({ open: false, id: null })} maxWidth="max-w-md">
+        <div className="text-lg font-semibold mb-4">Выберите фон для копилки</div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {BACKGROUNDS.map((background) => (
+            <button
+              key={background.id}
+              type="button"
+              onClick={() => {
+                const piggy = piggies.find(p => p.id === piggyBackgroundModal.id);
+                if (piggy) {
+                  updatePiggy(piggy.id, { background: background.id });
+                }
+                setPiggyBackgroundModal({ open: false, id: null });
+              }}
+              className="relative rounded-xl p-3 transition-all bg-white/5 hover:bg-white/10"
+            >
+              <div className={`w-full h-20 rounded-lg ${background.image ? `bg-[url('${background.image}')] bg-cover bg-center` : `bg-gradient-to-r ${background.gradient}`} mb-2`} />
+              <div className="text-xs font-medium">{background.label}</div>
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <button 
+            type="button" 
+            onClick={() => setPiggyBackgroundModal({ open: false, id: null })} 
+            className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
+          >
+            Отмена
           </button>
         </div>
       </Modal>

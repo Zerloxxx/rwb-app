@@ -12,10 +12,9 @@ export default function ParentMissions() {
     completeMission,
     isMissionCompleted
   } = useMissions();
-  const { addCoins } = useCoins();
+  // useCoins hook not needed for this component
 
   const [activeTab, setActiveTab] = useState('overview');
-  const [showCreateMission, setShowCreateMission] = useState(false);
   const [newMission, setNewMission] = useState({
     title: '',
     description: '',
@@ -61,7 +60,7 @@ export default function ParentMissions() {
         xp: 0,
         deadline: ''
       });
-      setShowCreateMission(false);
+      setActiveTab('active'); // Переключаемся на вкладку активных миссий
     }
   };
 

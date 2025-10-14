@@ -692,6 +692,13 @@ export default function Piggy({ onBack, role = "child" }) {
     setState((prev) => {
       const target = prev.piggies.find((item) => item.id === id);
       if (!target) return prev;
+      
+      // Родитель не может снимать с детских копилок
+      if (role === "parent" && target.owner === "child") {
+        console.log('⚠️ Родитель не может снимать с детских копилок');
+        return prev;
+      }
+      
       const currentAmount = Math.max(0, Number(target.amount) || 0);
       if (currentAmount <= 0) {
         // Нечего выводить — просто удалим копилку
@@ -780,6 +787,13 @@ export default function Piggy({ onBack, role = "child" }) {
         console.log('Копилка не найдена');
         return prev;
       }
+      
+      // Родитель может удалять только общие копилки, не детские
+      if (role === "parent" && target.owner === "child") {
+        console.log('⚠️ Родитель не может удалять детские копилки');
+        return prev;
+      }
+      
       const amount = Math.max(0, Number(target.amount) || 0);
       console.log(`Удаление копилки "${target.name}" на сумму ${amount}₽`);
       
@@ -968,7 +982,7 @@ export default function Piggy({ onBack, role = "child" }) {
 
   const handleCreate = async () => {
     try {
-      // Родитель всегда создает общие копилки, ребенок - свои
+      // Родитель может создавать общие копилки, ребенок - только свои
       const owner = role === "parent" ? "family" : "child";
       const name = draft.name.trim();
       
@@ -1203,7 +1217,7 @@ export default function Piggy({ onBack, role = "child" }) {
                           </svg>
                         </button>
                       )}
-                      {editable && (
+                      {editable && !(role === "parent" && piggy.owner === "child") && (
                         <button
                           type="button"
                           onClick={() => setConfirmModal({ open: true, id: piggy.id })}
@@ -1293,7 +1307,7 @@ export default function Piggy({ onBack, role = "child" }) {
                 ) : null}
               </div>
             </div>
-            {isCompleted ? (
+            {isCompleted && !(role === "parent" && piggy.owner === "child") ? (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/70 px-4 text-center">
                 <div className="text-lg font-bold">Цель выполнена!</div>
                 <button

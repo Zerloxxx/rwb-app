@@ -200,10 +200,16 @@ const missionsReducer = (state, action) => {
       };
 
     case "CREATE_CUSTOM_MISSION":
-      return {
+      console.log('🔄 Reducer: CREATE_CUSTOM_MISSION', {
+        currentCustomMissions: state.customMissions.length,
+        newMission: action.payload
+      });
+      const newState = {
         ...state,
         customMissions: [...state.customMissions, action.payload]
       };
+      console.log('✅ Reducer: Миссия добавлена, всего кастомных миссий:', newState.customMissions.length);
+      return newState;
 
     default:
       return state;
@@ -281,12 +287,22 @@ export const MissionsProvider = ({ children }) => {
 
   const getActiveMissions = () => {
     const allMissions = [...state.missions, ...state.customMissions];
-    return allMissions.filter(mission => {
+    console.log('📊 getActiveMissions:', {
+      regularMissions: state.missions.length,
+      customMissions: state.customMissions.length,
+      totalMissions: allMissions.length,
+      customMissionsList: state.customMissions.map(m => ({ id: m.id, title: m.title, type: m.type }))
+    });
+    
+    const activeMissions = allMissions.filter(mission => {
       if (mission.oneTime && state.completedMissions[mission.id]) {
         return false;
       }
       return true;
     });
+    
+    console.log('📊 Активные миссии:', activeMissions.length);
+    return activeMissions;
   };
 
   const getCompletedMissions = () => {
@@ -318,7 +334,9 @@ export const MissionsProvider = ({ children }) => {
   };
 
   const createCustomMission = (mission) => {
+    console.log('🔄 Создание кастомной миссии:', mission);
     dispatch({ type: "CREATE_CUSTOM_MISSION", payload: mission });
+    console.log('✅ Кастомная миссия создана');
   };
 
   const value = {

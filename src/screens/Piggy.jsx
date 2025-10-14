@@ -1017,9 +1017,12 @@ export default function Piggy({ onBack, role = "child" }) {
     return role !== "parent";
   };
 
-  const creationDisabled = role !== "parent" && ownerFilter === "family";
+  const creationDisabled = role === "parent";
 
   const restrictionNote = (() => {
+    if (role === "parent") {
+      return "Родитель не может создавать копилки";
+    }
     if (role !== "parent" && ownerFilter === "family") {
       return "Новую общую цель может создать родитель";
     }

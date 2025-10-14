@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMissions } from '../context/MissionsContext';
 import { useCoins } from '../context/CoinsContext';
+import { transferParentToChild } from '../utils/piggyStorage';
 
 export default function ParentMissions() {
   const { 
@@ -64,11 +65,34 @@ export default function ParentMissions() {
     }
   };
 
-  const handleRewardMission = (missionId) => {
+  const handleRewardMission = async (missionId) => {
+    // Находим миссию для получения информации о награде
+    const allMissions = [...getActiveMissions(), ...getCompletedMissions()];
+    const mission = allMissions.find(m => m.id === missionId);
+    
+    if (!mission) {
+      console.error('Миссия не найдена:', missionId);
+      return;
+    }
+
+    console.log('🎁 Награждение миссии:', mission);
+    
+    // Выполняем миссию
     const success = completeMission(missionId);
     if (success) {
-      // Здесь можно добавить дополнительную логику для награждения
-      console.log(`Миссия ${missionId} выполнена родителем!`);
+      // Если награда - деньги, переводим их с карты родителя на карту ребенка
+      if (mission.reward.type === 'money') {
+        const transferSuccess = await transferParentToChild(mission.reward.amount);
+        if (transferSuccess) {
+          console.log(`✅ Переведено ${mission.reward.amount}₽ с карты родителя на карту ребенка`);
+        } else {
+          console.error('❌ Ошибка перевода денег');
+        }
+      }
+      
+      console.log(`✅ Миссия ${missionId} выполнена родителем!`);
+    } else {
+      console.error('❌ Ошибка выполнения миссии');
     }
   };
 
@@ -186,11 +210,12 @@ export default function ParentMissions() {
                 <div className="flex items-center gap-2 text-sm">
                   <span>Награда:</span>
                   <span className="font-semibold">
-                    {mission.reward.type === 'coins' ? `${mission.reward.amount} монет` :
+                    {mission.reward.type === 'money' ? `${mission.reward.amount} ₽` :
+                     mission.reward.type === 'coins' ? `${mission.reward.amount} монет` :
                      mission.reward.type === 'badge' ? 'Значок' :
                      mission.reward.type === 'skin' ? 'Скин' : 'Награда'}
                   </span>
-                  <span className="text-white/70">+{mission.xp} XP</span>
+                  {mission.xp > 0 && <span className="text-white/70">+{mission.xp} XP</span>}
                 </div>
               </div>
 

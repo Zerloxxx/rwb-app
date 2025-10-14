@@ -1,0 +1,137 @@
+[
+  {
+    "id": "daily_piggy_deposit",
+    "type": "daily",
+    "title": "Пополни копилку",
+    "description": "Пополни любую копилку на сумму от 100 рублей",
+    "target": 1,
+    "reward": {
+      "type": "coins",
+      "amount": 20
+    },
+    "xp": 10,
+    "icon": "💰"
+  },
+  {
+    "id": "daily_quiz_complete",
+    "type": "daily", 
+    "title": "Пройди урок",
+    "description": "Заверши любой тест в разделе обучения",
+    "target": 1,
+    "reward": {
+      "type": "coins",
+      "amount": 15
+    },
+    "xp": 8,
+    "icon": "📚"
+  },
+  {
+    "id": "daily_no_spending",
+    "type": "daily",
+    "title": "День без трат",
+    "description": "Не трать деньги в течение дня",
+    "target": 1,
+    "reward": {
+      "type": "coins", 
+      "amount": 25
+    },
+    "xp": 12,
+    "icon": "💪"
+  },
+  {
+    "id": "weekly_piggy_goal",
+    "type": "weekly",
+    "title": "Достигни цели",
+    "description": "Достигни цели любой копилки",
+    "target": 1,
+    "reward": {
+      "type": "coins",
+      "amount": 100
+    },
+    "xp": 50,
+    "icon": "🎯"
+  },
+  {
+    "id": "weekly_quiz_streak",
+    "type": "weekly",
+    "title": "Серия побед",
+    "description": "Пройди 5 тестов подряд с результатом 80% или выше",
+    "target": 5,
+    "reward": {
+      "type": "coins",
+      "amount": 150
+    },
+    "xp": 75,
+    "icon": "🔥"
+  },
+  {
+    "id": "weekly_savings",
+    "type": "weekly",
+    "title": "Накопитель",
+    "description": "Пополни копилки на общую сумму 1000 рублей",
+    "target": 1000,
+    "reward": {
+      "type": "coins",
+      "amount": 200
+    },
+    "xp": 100,
+    "icon": "🏦"
+  },
+  {
+    "id": "story_first_piggy",
+    "type": "story",
+    "title": "Первая копилка",
+    "description": "Создай свою первую копилку",
+    "target": 1,
+    "reward": {
+      "type": "badge",
+      "id": "first_piggy"
+    },
+    "xp": 25,
+    "icon": "🐷",
+    "oneTime": true
+  },
+  {
+    "id": "story_first_quiz",
+    "type": "story",
+    "title": "Первые знания",
+    "description": "Пройди свой первый тест",
+    "target": 1,
+    "reward": {
+      "type": "badge",
+      "id": "first_quiz"
+    },
+    "xp": 20,
+    "icon": "🎓",
+    "oneTime": true
+  },
+  {
+    "id": "story_savings_master",
+    "type": "story",
+    "title": "Мастер накоплений",
+    "description": "Накопи в копилках 10,000 рублей",
+    "target": 10000,
+    "reward": {
+      "type": "skin",
+      "id": "penguin_racer"
+    },
+    "xp": 200,
+    "icon": "👑",
+    "oneTime": true
+  },
+  {
+    "id": "story_quiz_master",
+    "type": "story",
+    "title": "Знаток финансов",
+    "description": "Пройди 50 тестов с результатом 90% или выше",
+    "target": 50,
+    "reward": {
+      "type": "skin",
+      "id": "penguin_cosmo"
+    },
+    "xp": 300,
+    "icon": "🧠",
+    "oneTime": true
+  }
+]
+

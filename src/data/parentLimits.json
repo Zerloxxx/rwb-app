@@ -1,0 +1,48 @@
+{
+  "spendingLimits": {
+    "dailyLimit": 500,
+    "weeklyLimit": 2000,
+    "singlePurchaseLimit": 300,
+    "enabled": true
+  },
+  "operationPermissions": {
+    "onlinePurchases": true,
+    "atmWithdrawals": false,
+    "cardPayments": true,
+    "contactlessPayments": true,
+    "internationalPayments": false
+  },
+  "categoryRestrictions": {
+    "blockedCategories": [
+      "fastfood",
+      "games",
+      "entertainment"
+    ],
+    "allowedCategories": [
+      "food",
+      "education",
+      "health"
+    ]
+  },
+  "whitelist": {
+    "enabled": true,
+    "merchants": [
+      {
+        "id": "school_canteen",
+        "name": "Школьная столовая",
+        "category": "food"
+      },
+      {
+        "id": "bookstore",
+        "name": "Книжный магазин",
+        "category": "education"
+      }
+    ]
+  },
+  "approvalRequired": {
+    "enabled": true,
+    "amountThreshold": 200,
+    "pendingApprovals": []
+  }
+}
+

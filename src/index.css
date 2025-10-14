@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Глобальный тёмный фон + сбросы */
+@layer base {
+  html, body, #root {
+    @apply m-0 p-0 min-h-screen bg-[#0b0b12] text-white antialiased;
+  }
+}
+.celebration-burst__spark,
+.celebration-burst__trail {
+  pointer-events: none;
+}
+
+.celebration-burst__spark {
+  opacity: 0;
+  transform-origin: center;
+  animation: celebration-pop 1.6s ease-out forwards;
+}
+
+.celebration-burst__trail {
+  opacity: 0;
+  transform-origin: bottom center;
+  animation: celebration-shoot 1.6s ease-out forwards;
+}
+
+/* App themes */
+.app-day {
+  background: linear-gradient(180deg, #ffffff, #e9f0ff);
+  color: #0b0b12;
+}
+.app-night {
+  background: #0b0b12;
+  color: #fff;
+}
+.app-wb {
+  background: linear-gradient(180deg, #6d28d9, #a855f7);
+}
+.app-russ {
+  background: linear-gradient(180deg, #1182d3, #5fb7ff);
+}
+
+@keyframes celebration-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes celebration-shoot {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.4);
+  }
+  40% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(1) translateY(-18px);
+  }
+}

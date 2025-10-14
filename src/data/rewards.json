@@ -1,0 +1,13 @@
+﻿[
+  { "id": "card_neon", "type": "cardTheme", "name": "Карта Неон", "price": 120 },
+  { "id": "rare_gold_card", "type": "cardTheme", "name": "Редкая карта WB", "price": 300, "rare": true, "limited": true },
+  { "id": "card_antarctic", "type": "cardTheme", "name": "Карта Антарктика", "price": 70 },
+  { "id": "card_new_bg", "type": "cardTheme", "name": "Новый фон карты", "price": 250 },
+
+  { "id": "penguin_cosmo", "type": "penguinWear", "name": "Пингвин Космонавт", "price": 70 },
+  { "id": "penguin_racer", "type": "penguinWear", "name": "Пингвин Гонщик", "price": 70 },
+
+  { "id": "coupon_wb_5", "type": "coupon", "name": "Купон WB −5%", "price": 120, "meta": { "category": "Покупки", "code": "WB5-TEST", "expiresInDays": 30 } },
+  { "id": "coupon_toys_10", "type": "coupon", "name": "Игрушки −10%", "price": 150, "meta": { "category": "Игрушки", "code": "TOY10-TEST", "expiresInDays": 14 } },
+  { "id": "coupon_books_7", "type": "coupon", "name": "Книги −7%", "price": 130, "meta": { "category": "Книги", "code": "BOOK7-TEST", "expiresInDays": 21 } }
+]

@@ -31,9 +31,18 @@ const IconMinus = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
+const SettingsIcon = ({ className = "w-4 h-4" }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
+    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
 const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"];
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
+  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: false },
+  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: false },
 ];
 
 const BACKGROUNDS = [
@@ -285,6 +294,8 @@ export default function Piggy({ onBack, role = "child" }) {
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState(() => active?.penguinWear || "penguin_default");
+  const [selectedTopBackground, setSelectedTopBackground] = useState(() => active?.topBackground || "default");
+  const [topCustomizationModal, setTopCustomizationModal] = useState(false);
   const piggies = Array.isArray(state?.piggies) ? state.piggies : EMPTY_LIST;
   const cardBalance = Math.max(0, Number(state?.cardBalance) || 0);
 
@@ -389,6 +400,19 @@ export default function Piggy({ onBack, role = "child" }) {
       return `bg-[url('${background.image}')] bg-cover bg-center`;
     }
     return background.gradient;
+  };
+
+  const getCurrentPenguin = () => {
+    const penguin = PENGUIN_SKINS.find(p => p.id === selectedSkin);
+    return penguin?.image || defaultPenguin;
+  };
+
+  const getCurrentTopBackground = () => {
+    const background = BACKGROUNDS.find(bg => bg.id === selectedTopBackground);
+    if (background?.image) {
+      return `bg-[url('${background.image}')] bg-cover bg-center`;
+    }
+    return background?.gradient || "from-[#7a44ff] to-[#b35cff]";
   };
 
   const summaryChips = [
@@ -733,14 +757,14 @@ export default function Piggy({ onBack, role = "child" }) {
     return role !== "parent";
   };
 
-  const creationDisabled = role !== "parent" && ownerFilter === "family";
+  const creationDisabled = (role === "parent" && ownerFilter === "child") || (role !== "parent" && ownerFilter === "family");
 
   const restrictionNote = (() => {
-    if (role !== "parent" && ownerFilter === "family") {
-      return "Новую общую цель может создать родитель";
-    }
     if (role === "parent" && ownerFilter === "child") {
       return "Эти цели добавляются в приложении ребёнка";
+    }
+    if (role !== "parent" && ownerFilter === "family") {
+      return "Новую общую цель может создать родитель";
     }
     return null;
   })();
@@ -802,7 +826,7 @@ export default function Piggy({ onBack, role = "child" }) {
       </header>
 
       <section className="px-5">
-        <div className="relative min-h-[100px] rounded-[24px] bg-gradient-to-r from-[#7a44ff] to-[#b35cff] px-6 py-6 pr-28 shadow-lg shadow-black/30">
+        <div className={`relative min-h-[100px] rounded-[24px] bg-gradient-to-r ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}>
           <div className="text-[26px] font-extrabold leading-none tabular-nums">{fmtRub(totals.total)}</div>
           <div className="mt-2 text-sm text-white/80">Копим мечты вместе с семьёй</div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/85">
@@ -813,10 +837,18 @@ export default function Piggy({ onBack, role = "child" }) {
             ))}
           </div>
           <img
-            src={defaultPenguin}
+            src={getCurrentPenguin()}
             alt="Пингвин-коуч"
             className="pointer-events-none absolute bottom-2 right-2 h-[92px] select-none drop-shadow-[0_10px_25px_rgba(0,0,0,0.35)]"
           />
+          {role === "child" && (
+            <button
+              onClick={() => setTopCustomizationModal(true)}
+              className="absolute top-3 right-3 rounded-full bg-white/20 p-2 text-white hover:bg-white/30 transition-colors"
+            >
+              <SettingsIcon className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </section>
 
@@ -1153,6 +1185,73 @@ export default function Piggy({ onBack, role = "child" }) {
           >
             Отмена
           </button>
+        </div>
+      </Modal>
+
+      {/* Модалка кастомизации верхней копилки */}
+      <Modal open={topCustomizationModal} onClose={() => setTopCustomizationModal(false)}>
+        <div className="text-center">
+          <h3 className="text-xl font-bold mb-6">Кастомизация главной копилки</h3>
+          
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold mb-3">Пингвин</h4>
+            <div className="grid grid-cols-3 gap-3">
+              {PENGUIN_SKINS.map((penguin) => (
+                <button
+                  key={penguin.id}
+                  onClick={() => setSelectedSkin(penguin.id)}
+                  className={`p-3 rounded-xl border-2 transition-all ${
+                    selectedSkin === penguin.id
+                      ? "border-blue-500 bg-blue-500/20"
+                      : "border-gray-600 hover:border-gray-500"
+                  }`}
+                >
+                  <img src={penguin.image} alt={penguin.label} className="w-12 h-12 mx-auto mb-2" />
+                  <div className="text-xs font-medium">{penguin.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold mb-3">Фон</h4>
+            <div className="grid grid-cols-2 gap-3">
+              {BACKGROUNDS.map((background) => (
+                <button
+                  key={background.id}
+                  onClick={() => setSelectedTopBackground(background.id)}
+                  className={`p-3 rounded-xl border-2 transition-all ${
+                    selectedTopBackground === background.id
+                      ? "border-blue-500 bg-blue-500/20"
+                      : "border-gray-600 hover:border-gray-500"
+                  }`}
+                >
+                  <div className={`w-full h-12 rounded-lg mb-2 ${background.image ? `bg-[url('${background.image}')] bg-cover bg-center` : `bg-gradient-to-r ${background.gradient}`}`}></div>
+                  <div className="text-xs font-medium">{background.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button 
+              type="button" 
+              onClick={() => setTopCustomizationModal(false)} 
+              className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
+            >
+              Отмена
+            </button>
+            <button 
+              type="button" 
+              onClick={() => {
+                // Сохраняем настройки
+                setTopCustomizationModal(false);
+              }} 
+              className="flex-1 rounded-xl bg-blue-600 py-2 font-semibold"
+            >
+              Применить
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

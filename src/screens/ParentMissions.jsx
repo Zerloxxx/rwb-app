@@ -358,7 +358,7 @@ export default function ParentMissions() {
             disabled={!newMission.title.trim() || !newMission.description.trim()}
             className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
           >
-            Создать миссию
+            Создать миссию {(!newMission.title.trim() || !newMission.description.trim()) && "(заполните поля)"}
           </button>
         </div>
       </div>

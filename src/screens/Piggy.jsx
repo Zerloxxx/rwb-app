@@ -1,6 +1,5 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import defaultPenguin from "../assets/penguin.png";
-import penguinCosmo from "../assets/penguin-cosmo.png";
 import { loadPiggyState, savePiggyState } from "../utils/piggyStorage";
 import { useProfile } from "../context/ProfileContext";
 import { appendStoredTransaction } from "../utils/spendsStorage";
@@ -35,7 +34,6 @@ const IconMinus = ({ className = "w-5 h-5" }) => (
 const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"];
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
-  { id: "penguin_cosmo", label: "Космонавт", image: penguinCosmo, ownedByDefault: false },
 ];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
@@ -790,7 +788,7 @@ export default function Piggy({ onBack, role = "child" }) {
             ))}
           </div>
           <img
-            src={penguin}
+            src={defaultPenguin}
             alt="Пингвин-коуч"
             className="pointer-events-none absolute bottom-2 right-2 h-[92px] select-none drop-shadow-[0_10px_25px_rgba(0,0,0,0.35)]"
           />

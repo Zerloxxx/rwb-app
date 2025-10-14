@@ -1,10 +1,4 @@
-// Optional local imports (if images are placed under src/). If files do not exist, bundler will ignore? We'll guard usage below.
-let localGold = null;
-let localNeon = null;
-let localNew = null;
-try { localGold = require("../card-gold.jpg"); } catch {}
-try { localNeon = require("../card-neon.jpg"); } catch {}
-try { localNew = require("../card-new.jpg"); } catch {}
+// Images are in public folder, so we use relative paths
 export const CARD_THEMES = {
   card_wb_purple: {
     label: "WB Фиолет",
@@ -20,17 +14,17 @@ export const CARD_THEMES = {
   },
   card_neon: {
     label: "Неон",
-    image: localNeon || "./card-neon.jpg", // src fallback или public
+    image: "./card-neon.jpg",
     style: { color: "#fff" },
   },
   rare_gold_card: {
     label: "Золотая карта WB",
-    image: localGold || "./card-gold.jpg", // src fallback или public
+    image: "./card-gold.jpg",
     style: { color: "#1b1300" },
   },
   card_new_bg: {
     label: "Новый фон",
-    image: localNew || "./card-new.jpg",
+    image: "./card-new.jpg",
     style: { color: "#fff" },
   },
   card_russ_blue: {

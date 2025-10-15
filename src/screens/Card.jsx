@@ -62,7 +62,7 @@ export default function Card({ onBack, role = "child" }) {
     () => Array.from(new Set([...BASE_THEMES, ...shopCardThemeIds])),
     [shopCardThemeIds],
   );
-  const canCustomize = role === "child";
+  const canCustomize = true; // Показываем кнопку дизайна для всех
 
   const availableGoals = useMemo(() => (Array.isArray(piggies) ? piggies : []), [piggies]);
 
@@ -263,7 +263,7 @@ export default function Card({ onBack, role = "child" }) {
         </div>
       </header>
 
-      <section className="space-y-4 px-5 pb-20 pt-26">
+      <section className="space-y-6 px-5 pb-20 pt-26">
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"
           style={{ ...effectiveThemeStyle, minHeight: 200 }}

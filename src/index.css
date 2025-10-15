@@ -8,6 +8,19 @@
     @apply m-0 p-0 min-h-screen bg-[#0b0b12] text-white antialiased;
   }
 }
+@layer components {
+  .sticky-header {
+    position: sticky;
+    top: max(env(safe-area-inset-top, 0px), 0px);
+    z-index: 50;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+    backdrop-filter: blur(12px);
+  }
+
+  .sticky-header--tight {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+  }
+}
 .celebration-burst__spark,
 .celebration-burst__trail {
   pointer-events: none;

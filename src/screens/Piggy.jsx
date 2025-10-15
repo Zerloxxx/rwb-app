@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import defaultPenguin from "../assets/penguin.png";
 import { loadPiggyState, savePiggyState } from "../utils/piggyStorage";
 import { useProfile } from "../context/ProfileContext";
@@ -859,8 +859,7 @@ export default function Piggy({ onBack, role = "child" }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header
-        className="relative z-40 flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
+        className="sticky-header flex flex-wrap items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
       >
         <button
           type="button"
@@ -869,7 +868,7 @@ export default function Piggy({ onBack, role = "child" }) {
         >
           <IconBack className="h-5 w-5" />
         </button>
-        <div>
+        <div className="min-w-0">
           <div className="text-xl font-bold">Копилки</div>
           <div className="text-sm text-white/60">Всего накоплено: {fmtRub(totals.total)}</div>
         </div>
@@ -1307,7 +1306,6 @@ export default function Piggy({ onBack, role = "child" }) {
     </div>
   );
 }
-
 
 
 

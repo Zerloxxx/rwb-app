@@ -18,10 +18,10 @@ export default function Shop() {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
-      <header className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+      <header className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30 sm:flex-nowrap">
         <button type="button" onClick={() => (window.location.hash = "#/learn")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
-        <div className="text-base font-semibold">Магазин наград</div>
-        <div className="rounded-full bg-white/10 px-3 py-1.5 text-sm">Баланс: {balance}</div>
+        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">Магазин наград</div>
+        <div className="order-3 w-full rounded-full bg-white/10 px-3 py-1.5 text-sm text-center sm:order-none sm:w-auto">Баланс: {balance}</div>
       </header>
 
       <div className="px-5 pt-4">

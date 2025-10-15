@@ -12,10 +12,10 @@ export default function Learn() {
          Каждая тема имеет slug, title, level, questions[].
          Прогресс сохраняется в localStorage по ключу rwb_quiz_progress.
          Лучший результат по теме хранится как bestCorrect/total. */}
-      <header className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+      <header className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30 sm:flex-nowrap">
         <button onClick={() => (window.location.hash = "#/")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
-        <div className="text-base font-semibold">Обучение</div>
-        <div className="flex items-center gap-2">
+        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">Обучение</div>
+        <div className="order-3 flex w-full flex-wrap items-center justify-end gap-2 sm:order-none sm:w-auto">
           <button onClick={() => goto('/shop')} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Магазин</button>
           <div className="rounded-full bg-white/10 px-3 py-1.5 text-sm">💰 {balance}</div>
         </div>

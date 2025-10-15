@@ -72,27 +72,28 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header
-        className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
+        className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="rounded-full bg-white px-4 py-1 shadow-md">
-            <img src={logoRWB} alt="Логотип RWB" className="h-5 w-auto object-contain" />
+            <img src={logoRWB} alt="?>???????'??? RWB" className="h-5 w-auto object-contain" />
           </div>
-          <div className="leading-tight">
-            <div className="text-sm text-white/60">RWB Банк</div>
-            <div className="text-base font-semibold">Режим: {roleLabel}</div>
+          <div className="min-w-0 leading-tight">
+            <div className="text-xs text-white/60 sm:text-sm">RWB ?'??????</div>
+            <div className="truncate text-sm font-semibold sm:text-base">????????: {roleLabel}</div>
           </div>
         </div>
 
-        <div className="rounded-full bg-white/10 px-3 py-1.5 text-sm">💰 {balance}</div>
+        <div className="order-3 w-full rounded-full bg-white/10 px-3 py-1.5 text-sm text-center sm:order-none sm:w-auto">
+          ??'? {balance}
+        </div>
 
         {onOpenRoleModal && (
           <button
             type="button"
             onClick={onOpenRoleModal}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
-            aria-label="Сменить профиль"
+            className="order-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 sm:order-none"
+            aria-label="Open role switcher"
           >
             <IconMenu className="h-5 w-5" />
           </button>
@@ -106,7 +107,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
             onClick={() => goto("card")}
             className="relative overflow-hidden rounded-[24px] p-5 text-left text-white shadow-lg shadow-black/30"
             style={{ ...homeCardStyle, minHeight: 200 }}
-            aria-label="Открыть страницу карты"
+            aria-label="Open card details"
           >
             <div className="absolute inset-0 bg-black/35" />
             <div className="relative flex min-h-[200px] flex-col justify-between">
@@ -127,7 +128,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
             type="button"
             onClick={() => goto("spends")}
             className="flex flex-col items-start gap-3 rounded-[24px] bg-[#1a1a1f] p-5 text-left text-white shadow-lg shadow-black/25 transition hover:ring-2 hover:ring-white/20"
-            aria-label="Открыть аналитику трат"
+            aria-label="Open spends analytics"
           >
             <div className="text-xs font-semibold uppercase tracking-wide text-white/65">Траты за месяц</div>
             <div className="flex w-full flex-wrap items-end justify-between gap-3">
@@ -229,6 +230,8 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
     </div>
   );
 }
+
+
 
 
 

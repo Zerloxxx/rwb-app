@@ -113,10 +113,10 @@ export default function Profile() {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-24 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+      <header className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30 sm:flex-nowrap">
         <button type="button" onClick={() => (window.location.hash = "#/")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
-        <div className="text-base font-semibold">Профиль</div>
-        <div className="w-16" />
+        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">Профиль</div>
+        <div className="hidden sm:block sm:w-16" />
       </header>
 
       {/* Вкладки */}
@@ -242,7 +242,7 @@ export default function Profile() {
 
       {/* Редактирование профиля в модалке */}
       <Modal open={editOpen} onClose={() => setEditOpen(false)}>
-        <div className="text-base font-semibold">Редактировать профиль</div>
+        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">Редактировать профиль</div>
         <div className="mt-3 text-xs text-white/70">Имя</div>
         <input value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} className="mt-1 w-full rounded-[12px] bg-white/10 px-3 py-2 text-sm outline-none" placeholder="Имя" />
         <div className="mt-4 text-xs text-white/70">Фраза под именем</div>

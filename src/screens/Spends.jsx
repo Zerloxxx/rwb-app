@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAutosave } from "../context/AutosaveContext";
 import { SPENDS_UPDATED_EVENT, loadStoredTransactions, saveStoredTransactions, getSpendsStorageKey } from "../utils/spendsStorage";
 
@@ -750,8 +750,7 @@ export default function Spends({ onBack }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header
-        className="relative z-40 flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
+        className="sticky-header flex flex-wrap items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
       >
         <button
           onClick={onBack}
@@ -761,7 +760,7 @@ export default function Spends({ onBack }) {
         >
           <IconBack className="h-5 w-5" />
         </button>
-        <div>
+        <div className="min-w-0">
           <div className="text-xl font-bold">Траты</div>
           <div className="text-sm text-white/70">Управляй своими покупками</div>
         </div>
@@ -852,5 +851,4 @@ export default function Spends({ onBack }) {
     </div>
   );
 }
-
 

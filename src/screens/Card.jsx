@@ -230,10 +230,9 @@ export default function Card({ onBack, role = "child" }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] text-white">
       <header
-        className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
-        style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
+        className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <button
             type="button"
             onClick={onBack}
@@ -245,7 +244,7 @@ export default function Card({ onBack, role = "child" }) {
           </button>
           <div className="text-xl font-bold">Карта</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="order-3 flex w-full flex-wrap items-center justify-end gap-2 sm:order-none sm:w-auto">
           <button
             type="button"
             onClick={() => setAutosaveOpen(true)}

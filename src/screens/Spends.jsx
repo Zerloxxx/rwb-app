@@ -764,7 +764,7 @@ export default function Spends({ onBack }) {
         </div>
       </header>
 
-      <div className="space-y-5 px-5">
+      <div className="space-y-5 px-5 pt-26">
         <div className="rounded-[22px] bg-gradient-to-r from-[#a855f7] via-[#6366f1] to-[#22d3ee] p-5 text-white shadow-lg">
           <div className="flex items-start justify-between gap-3">
             <div>

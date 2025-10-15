@@ -150,7 +150,7 @@ export default function Profile() {
       {/* Контент вкладок */}
       {activeTab === "overview" && (
         <>
-          <section className="px-5 pt-28">
+          <section className="px-5 pt-26">
             {/* Приветствие и аватар */}
             <div
               className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30"
@@ -235,7 +235,7 @@ export default function Profile() {
 
       {/* Вкладка разрешений */}
       {activeTab === "permissions" && (
-        <main className="px-5 pt-28">
+        <main className="px-5 pt-26">
           <ChildPermissions />
         </main>
       )}

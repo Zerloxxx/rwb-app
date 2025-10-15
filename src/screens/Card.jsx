@@ -263,7 +263,7 @@ export default function Card({ onBack, role = "child" }) {
         </div>
       </header>
 
-      <section className="space-y-4 px-5 pb-20 pt-5">
+      <section className="space-y-4 px-5 pb-20 pt-26">
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"
           style={{ ...effectiveThemeStyle, minHeight: 200 }}
@@ -307,7 +307,7 @@ export default function Card({ onBack, role = "child" }) {
         </div>
 
         {selectorOpen && canCustomize && (
-          <div className="fixed inset-0 z-[110] flex items-end justify-center bg-black/60 p-4 sm:items-center">
+          <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/60 p-4">
             <div className="w-full max-w-md rounded-2xl bg-[#1a1a1f] p-4 text-white shadow-xl">
               <div className="mb-2 flex items-center justify-between">
                 <div className="text-base font-semibold">Выбери оформление карты</div>
@@ -366,14 +366,14 @@ export default function Card({ onBack, role = "child" }) {
       </section>
 
       {autosaveOpen && (
-        <div className="fixed inset-0 z-[120] flex flex-col justify-end bg-black/70 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[120] flex flex-col justify-end bg-black/70 backdrop-blur-sm overflow-y-auto">
           <button
             type="button"
             className="flex-1 cursor-pointer"
             aria-label="Закрыть настройки автосбережений"
             onClick={closeAutosave}
           />
-          <div className="relative w-full rounded-t-[32px] bg-[#14121d] px-5 pb-6 pt-4 text-white shadow-[0_-20px_60px_rgba(0,0,0,0.6)]">
+          <div className="relative w-full max-h-[80vh] rounded-t-[32px] bg-[#14121d] px-5 pb-6 pt-4 text-white shadow-[0_-20px_60px_rgba(0,0,0,0.6)] overflow-y-auto">
             <div className="mx-auto h-1.5 w-12 rounded-full bg-white/20" />
             <div className="mt-4 flex items-start justify-between gap-3">
               <div>

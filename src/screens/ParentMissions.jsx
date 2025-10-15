@@ -396,7 +396,7 @@ export default function ParentMissions() {
       </header>
 
       {/* Вкладки */}
-        <div className="px-5 pt-28">
+        <div className="px-5 pt-26">
         <div className="flex gap-2 overflow-x-auto pb-2">
           {tabs.map((tab) => (
             <button

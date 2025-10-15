@@ -90,7 +90,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
         )}
       </header>
 
-      <section className="rounded-t-[28px] bg-gradient-to-b from-[#4338ca] via-[#6d28d9] to-[#a855f7] px-5 pb-6 pt-20">
+      <section className="rounded-t-[28px] bg-gradient-to-b from-[#4338ca] via-[#6d28d9] to-[#a855f7] px-5 pb-6 pt-28">
         {/* Карточка баланса родителя с фоном */}
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"

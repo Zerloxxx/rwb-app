@@ -150,7 +150,7 @@ export default function Profile() {
       {/* Контент вкладок */}
       {activeTab === "overview" && (
         <>
-          <section className="px-5 pt-20">
+          <section className="px-5 pt-28">
             {/* Приветствие и аватар */}
             <div
               className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30"

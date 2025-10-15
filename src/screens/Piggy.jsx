@@ -48,9 +48,9 @@ const PENGUIN_SKINS = [
 const BACKGROUNDS = [
   { id: "default", label: "По умолчанию", gradient: "from-[#7a44ff] to-[#b35cff]", ownedByDefault: true },
   { id: "blue_sky", label: "Голубое небо", gradient: "from-[#3b82f6] to-[#06b6d4]", ownedByDefault: true },
-  { id: "cosmic", label: "Космический", image: "./cosmic-background.jpg", ownedByDefault: true },
-  { id: "sunny_field", label: "Солнечное поле", gradient: "from-[#f59e0b] to-[#f97316]", ownedByDefault: false },
-  { id: "cyberpunk", label: "Киберпанк город", image: "./cyberpunk-background.jpg", ownedByDefault: false },
+  { id: "cosmic", label: "Космос", image: "./cosmic-background.jpg", ownedByDefault: true },
+  { id: "sunny_field", label: "Солнечное поле", image: "./sunny-field-background.jpg", ownedByDefault: false },
+  { id: "cyberpunk", label: "Киберпанк", image: "./cyberpunk-city-background.jpg", ownedByDefault: false },
 ];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
@@ -1208,144 +1208,150 @@ export default function Piggy({ onBack, role = "child" }) {
 
       {/* Модальное окно кастомизации верхней панели */}
       <Modal open={topCustomizationModal} onClose={() => setTopCustomizationModal(false)} maxWidth="max-w-sm">
-        <div className="text-lg font-semibold">Настройка верхней панели</div>
-        
-        <div className="mt-4">
-          <div className="mb-3 text-sm text-white/70">Пингвин</div>
-          <div className="grid grid-cols-3 gap-3">
-            {PENGUIN_SKINS.map((skin) => (
-              <button
-                key={skin.id}
-                onClick={() => setSelectedSkin(skin.id)}
-                className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
-                  selectedSkin === skin.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
-                }`}
-              >
-                <div className="aspect-square overflow-hidden rounded-lg bg-white/10">
-                  <img src={skin.image} alt={skin.label} className="h-full w-full object-contain" />
-                </div>
-                <div className="mt-2 text-xs text-white/80">{skin.label}</div>
-                {selectedSkin === skin.id && (
-                  <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
+        <div className="max-h-[80vh] flex flex-col">
+          <div className="text-lg font-semibold mb-4">Настройка верхней панели</div>
+          
+          <div className="flex-1 overflow-y-auto">
+            <div className="mt-4">
+              <div className="mb-3 text-sm text-white/70">Пингвин</div>
+              <div className="grid grid-cols-3 gap-3">
+                {PENGUIN_SKINS.map((skin) => (
+                  <button
+                    key={skin.id}
+                    onClick={() => setSelectedSkin(skin.id)}
+                    className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
+                      selectedSkin === skin.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
+                    }`}
+                  >
+                    <div className="aspect-square overflow-hidden rounded-lg bg-white/10">
+                      <img src={skin.image} alt={skin.label} className="h-full w-full object-contain" />
+                    </div>
+                    <div className="mt-2 text-xs text-white/80">{skin.label}</div>
+                    {selectedSkin === skin.id && (
+                      <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div className="mt-6">
-          <div className="mb-3 text-sm text-white/70">Фон</div>
-          <div className="grid grid-cols-2 gap-3">
-            {BACKGROUNDS.map((background) => (
-              <button
-                key={background.id}
-                onClick={() => setSelectedTopBackground(background.id)}
-                className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
-                  selectedTopBackground === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
-                }`}
-              >
-                <div 
-                  className={`aspect-video rounded-lg ${
-                    background.image 
-                      ? 'bg-cover bg-center' 
-                      : `bg-gradient-to-r ${background.gradient}`
-                  }`}
-                  style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
-                />
-                <div className="mt-2 text-xs text-white/80">{background.label}</div>
-                {selectedTopBackground === background.id && (
-                  <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
-                  </div>
-                )}
-              </button>
-            ))}
+            <div className="mt-6">
+              <div className="mb-3 text-sm text-white/70">Фон</div>
+              <div className="grid grid-cols-2 gap-3">
+                {BACKGROUNDS.map((background) => (
+                  <button
+                    key={background.id}
+                    onClick={() => setSelectedTopBackground(background.id)}
+                    className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
+                      selectedTopBackground === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
+                    }`}
+                  >
+                    <div 
+                      className={`aspect-video rounded-lg ${
+                        background.image 
+                          ? 'bg-cover bg-center' 
+                          : `bg-gradient-to-r ${background.gradient}`
+                      }`}
+                      style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
+                    />
+                    <div className="mt-2 text-xs text-white/80">{background.label}</div>
+                    {selectedTopBackground === background.id && (
+                      <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="mt-6 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setTopCustomizationModal(false)}
-            className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
-          >
-            Отмена
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              // Сохраняем настройки
-              activateReward({ id: selectedSkin, type: "penguinWear" });
-              activateReward({ id: selectedTopBackground, type: "topBackground" });
-              setTopCustomizationModal(false);
-            }}
-            className="flex-1 rounded-xl bg-white py-2 font-semibold text-black"
-          >
-            Применить
-          </button>
+          <div className="mt-4 flex gap-2 flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setTopCustomizationModal(false)}
+              className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
+            >
+              Отмена
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                // Сохраняем настройки
+                activateReward({ id: selectedSkin, type: "penguinWear" });
+                activateReward({ id: selectedTopBackground, type: "topBackground" });
+                setTopCustomizationModal(false);
+              }}
+              className="flex-1 rounded-xl bg-white py-2 font-semibold text-black"
+            >
+              Применить
+            </button>
+          </div>
         </div>
       </Modal>
 
       {/* Модальное окно кастомизации копилки */}
       <Modal open={piggyCustomizationModal} onClose={() => setPiggyCustomizationModal(false)} maxWidth="max-w-sm">
-        <div className="text-lg font-semibold">Настройка фона копилки</div>
-        
-        <div className="mt-4">
-          <div className="mb-3 text-sm text-white/70">Фон</div>
-          <div className="grid grid-cols-2 gap-3">
-            {BACKGROUNDS.map((background) => (
-              <button
-                key={background.id}
-                onClick={() => {
-                  if (editingPiggyId) {
-                    updatePiggy(editingPiggyId, { background: background.id });
-                  }
-                }}
-                className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
-                  (() => {
-                    const piggy = piggies.find(p => p.id === editingPiggyId);
-                    return piggy?.background === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0";
-                  })()
-                }`}
-              >
-                <div 
-                  className={`aspect-video rounded-lg ${
-                    background.image 
-                      ? 'bg-cover bg-center' 
-                      : `bg-gradient-to-r ${background.gradient}`
+        <div className="max-h-[80vh] flex flex-col">
+          <div className="text-lg font-semibold mb-4">Настройка фона копилки</div>
+          
+          <div className="flex-1 overflow-y-auto">
+            <div className="mb-3 text-sm text-white/70">Фон</div>
+            <div className="grid grid-cols-2 gap-3">
+              {BACKGROUNDS.map((background) => (
+                <button
+                  key={background.id}
+                  onClick={() => {
+                    if (editingPiggyId) {
+                      updatePiggy(editingPiggyId, { background: background.id });
+                    }
+                  }}
+                  className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
+                    (() => {
+                      const piggy = piggies.find(p => p.id === editingPiggyId);
+                      return piggy?.background === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0";
+                    })()
                   }`}
-                  style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
-                />
-                <div className="mt-2 text-xs text-white/80">{background.label}</div>
-                {(() => {
-                  const piggy = piggies.find(p => p.id === editingPiggyId);
-                  return piggy?.background === background.id && (
-                    <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    </div>
-                  );
-                })()}
-              </button>
-            ))}
+                >
+                  <div 
+                    className={`aspect-video rounded-lg ${
+                      background.image 
+                        ? 'bg-cover bg-center' 
+                        : `bg-gradient-to-r ${background.gradient}`
+                    }`}
+                    style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
+                  />
+                  <div className="mt-2 text-xs text-white/80">{background.label}</div>
+                  {(() => {
+                    const piggy = piggies.find(p => p.id === editingPiggyId);
+                    return piggy?.background === background.id && (
+                      <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      </div>
+                    );
+                  })()}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-6 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setPiggyCustomizationModal(false)}
-            className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
-          >
-            Готово
-          </button>
+          <div className="mt-4 flex gap-2 flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setPiggyCustomizationModal(false)}
+              className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
+            >
+              Готово
+            </button>
+          </div>
         </div>
       </Modal>
     </div>

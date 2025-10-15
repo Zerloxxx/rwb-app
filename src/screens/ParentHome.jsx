@@ -253,7 +253,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
         </div>
       </section>
 
-      <nav className="sticky bottom-0 left-0 right-0 z-50">
+      <nav className="fixed inset-x-0 bottom-0 z-50">
         <div
           className="mx-auto w-full max-w-[430px] px-5"
           style={{ paddingBottom: "calc(env(safe-area-inset-bottom, 0) + 16px)" }}

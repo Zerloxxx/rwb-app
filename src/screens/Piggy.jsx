@@ -48,9 +48,9 @@ const PENGUIN_SKINS = [
 const BACKGROUNDS = [
   { id: "default", label: "По умолчанию", gradient: "from-[#7a44ff] to-[#b35cff]", ownedByDefault: true },
   { id: "blue_sky", label: "Голубое небо", gradient: "from-[#3b82f6] to-[#06b6d4]", ownedByDefault: true },
-  { id: "cosmic", label: "Космический", gradient: "from-[#1e1b4b] to-[#312e81]", ownedByDefault: true },
+  { id: "cosmic", label: "Космический", image: "./cosmic-background.jpg", ownedByDefault: true },
   { id: "sunny_field", label: "Солнечное поле", gradient: "from-[#f59e0b] to-[#f97316]", ownedByDefault: false },
-  { id: "cyberpunk", label: "Киберпанк город", gradient: "from-[#7c3aed] to-[#ec4899]", ownedByDefault: false },
+  { id: "cyberpunk", label: "Киберпанк город", image: "./cyberpunk-background.jpg", ownedByDefault: false },
 ];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
@@ -295,6 +295,8 @@ export default function Piggy({ onBack, role = "child" }) {
   const [selectedSkin, setSelectedSkin] = useState(() => active?.penguinWear || "penguin_default");
   const [selectedTopBackground, setSelectedTopBackground] = useState(() => active?.topBackground || "default");
   const [topCustomizationModal, setTopCustomizationModal] = useState(false);
+  const [piggyCustomizationModal, setPiggyCustomizationModal] = useState(false);
+  const [editingPiggyId, setEditingPiggyId] = useState(null);
   const piggies = Array.isArray(state?.piggies) ? state.piggies : EMPTY_LIST;
   const cardBalance = Math.max(0, Number(state?.cardBalance) || 0);
 
@@ -425,6 +427,7 @@ export default function Piggy({ onBack, role = "child" }) {
 
       const currentAmount = Math.max(0, Number(target.amount) || 0);
       const currentCard = Math.max(0, Number(prev.cardBalance) || 0);
+      const currentParentCard = Math.max(0, Number(prev.parentCardBalance) || 0);
       const goal = Math.max(0, Number(target.goal) || 0);
       const remainingCapacity = goal > 0 ? Math.max(0, goal - currentAmount) : Number.POSITIVE_INFINITY;
 
@@ -435,13 +438,25 @@ export default function Piggy({ onBack, role = "child" }) {
           return prev;
         }
         transfer = { status: "success", type: "withdraw", amount: actual, piggy: target };
-        return {
-          ...prev,
-          cardBalance: currentCard + actual,
-          piggies: prev.piggies.map((item) =>
-            item.id === id ? { ...item, amount: currentAmount - actual } : item
-          ),
-        };
+        
+        // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
+        if (role === "parent" && owner === "family") {
+          return {
+            ...prev,
+            parentCardBalance: currentParentCard + actual,
+            piggies: prev.piggies.map((item) =>
+              item.id === id ? { ...item, amount: currentAmount - actual } : item
+            ),
+          };
+        } else {
+          return {
+            ...prev,
+            cardBalance: currentCard + actual,
+            piggies: prev.piggies.map((item) =>
+              item.id === id ? { ...item, amount: currentAmount - actual } : item
+            ),
+          };
+        }
       }
 
       if (remainingCapacity <= 0) {
@@ -449,9 +464,19 @@ export default function Piggy({ onBack, role = "child" }) {
         return prev;
       }
 
-      const actual = Math.min(amount, currentCard, remainingCapacity);
+      // Определяем, с какой карты списывать деньги
+      let sourceBalance, sourceKey;
+      if (role === "parent" && owner === "family") {
+        sourceBalance = currentParentCard;
+        sourceKey = "parentCardBalance";
+      } else {
+        sourceBalance = currentCard;
+        sourceKey = "cardBalance";
+      }
+
+      const actual = Math.min(amount, sourceBalance, remainingCapacity);
       if (actual <= 0) {
-        transfer = { status: currentCard <= 0 ? "insufficient" : "full", piggy: target };
+        transfer = { status: sourceBalance <= 0 ? "insufficient" : "full", piggy: target };
         return prev;
       }
 
@@ -465,7 +490,7 @@ export default function Piggy({ onBack, role = "child" }) {
 
       return {
         ...prev,
-        cardBalance: currentCard - actual,
+        [sourceKey]: sourceBalance - actual,
         piggies: prev.piggies.map((item) =>
           item.id === id ? { ...item, amount: currentAmount + actual } : item
         ),
@@ -515,6 +540,8 @@ export default function Piggy({ onBack, role = "child" }) {
       const target = prev.piggies.find((item) => item.id === id);
       if (!target) return prev;
       const currentAmount = Math.max(0, Number(target.amount) || 0);
+      const owner = target.owner === "family" ? "family" : "child";
+      
       if (currentAmount <= 0) {
         // Нечего выводить — просто удалим копилку
         return {
@@ -523,12 +550,22 @@ export default function Piggy({ onBack, role = "child" }) {
         };
       }
 
-      const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + currentAmount;
-      return {
-        ...prev,
-        cardBalance: nextCard,
-        piggies: prev.piggies.filter((item) => item.id !== id),
-      };
+      // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
+      if (role === "parent" && owner === "family") {
+        const nextParentCard = Math.max(0, Number(prev.parentCardBalance) || 0) + currentAmount;
+        return {
+          ...prev,
+          parentCardBalance: nextParentCard,
+          piggies: prev.piggies.filter((item) => item.id !== id),
+        };
+      } else {
+        const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + currentAmount;
+        return {
+          ...prev,
+          cardBalance: nextCard,
+          piggies: prev.piggies.filter((item) => item.id !== id),
+        };
+      }
     });
   };
 
@@ -589,12 +626,24 @@ export default function Piggy({ onBack, role = "child" }) {
       const target = prev.piggies.find((p) => p.id === id);
       if (!target) return prev;
       const amount = Math.max(0, Number(target.amount) || 0);
-      const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + amount;
-      return {
-        ...prev,
-        cardBalance: nextCard,
-        piggies: prev.piggies.filter((item) => item.id !== id),
-      };
+      const owner = target.owner === "family" ? "family" : "child";
+      
+      // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
+      if (role === "parent" && owner === "family") {
+        const nextParentCard = Math.max(0, Number(prev.parentCardBalance) || 0) + amount;
+        return {
+          ...prev,
+          parentCardBalance: nextParentCard,
+          piggies: prev.piggies.filter((item) => item.id !== id),
+        };
+      } else {
+        const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + amount;
+        return {
+          ...prev,
+          cardBalance: nextCard,
+          piggies: prev.piggies.filter((item) => item.id !== id),
+        };
+      }
     });
   };
 
@@ -733,7 +782,22 @@ export default function Piggy({ onBack, role = "child" }) {
 
   const getCurrentTopBackground = () => {
     const background = BACKGROUNDS.find(bg => bg.id === selectedTopBackground) || BACKGROUNDS[0];
+    if (background.image) {
+      return `bg-cover bg-center`;
+    }
     return `bg-gradient-to-r ${background.gradient}`;
+  };
+
+  const getCurrentTopBackgroundStyle = () => {
+    const background = BACKGROUNDS.find(bg => bg.id === selectedTopBackground) || BACKGROUNDS[0];
+    if (background.image) {
+      return {
+        backgroundImage: `url(${background.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      };
+    }
+    return {};
   };
 
   const getCurrentPenguin = () => {
@@ -810,7 +874,10 @@ export default function Piggy({ onBack, role = "child" }) {
       </header>
 
       <section className="px-5">
-        <div className={`relative min-h-[100px] rounded-[24px] ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}>
+        <div 
+          className={`relative min-h-[100px] rounded-[24px] ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}
+          style={getCurrentTopBackgroundStyle()}
+        >
           <div className="text-[26px] font-extrabold leading-none tabular-nums">{fmtRub(totals.total)}</div>
           <div className="mt-2 text-sm text-white/80">Копим мечты вместе с семьёй</div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/85">
@@ -933,14 +1000,27 @@ export default function Piggy({ onBack, role = "child" }) {
                         </span>
                       )}
                       {editable && (
-                        <button
-                          type="button"
-                          onClick={() => setConfirmModal({ open: true, id: piggy.id })}
-                          className="ml-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/70 transition hover:bg-white/10"
-                          title="Удалить цель"
-                        >
-                          <IconTrash className="h-4 w-4" />
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingPiggyId(piggy.id);
+                              setPiggyCustomizationModal(true);
+                            }}
+                            className="ml-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/70 transition hover:bg-white/10"
+                            title="Настроить фон"
+                          >
+                            <SettingsIcon className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirmModal({ open: true, id: piggy.id })}
+                            className="ml-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/70 transition hover:bg-white/10"
+                            title="Удалить цель"
+                          >
+                            <IconTrash className="h-4 w-4" />
+                          </button>
+                        </>
                       )}
                     </div>
                     <div className="mt-1 flex flex-wrap items-center gap-1 text-sm text-white/60">
@@ -1168,7 +1248,14 @@ export default function Piggy({ onBack, role = "child" }) {
                   selectedTopBackground === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
                 }`}
               >
-                <div className={`aspect-video rounded-lg bg-gradient-to-r ${background.gradient}`} />
+                <div 
+                  className={`aspect-video rounded-lg ${
+                    background.image 
+                      ? 'bg-cover bg-center' 
+                      : `bg-gradient-to-r ${background.gradient}`
+                  }`}
+                  style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
+                />
                 <div className="mt-2 text-xs text-white/80">{background.label}</div>
                 {selectedTopBackground === background.id && (
                   <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
@@ -1201,6 +1288,63 @@ export default function Piggy({ onBack, role = "child" }) {
             className="flex-1 rounded-xl bg-white py-2 font-semibold text-black"
           >
             Применить
+          </button>
+        </div>
+      </Modal>
+
+      {/* Модальное окно кастомизации копилки */}
+      <Modal open={piggyCustomizationModal} onClose={() => setPiggyCustomizationModal(false)} maxWidth="max-w-sm">
+        <div className="text-lg font-semibold">Настройка фона копилки</div>
+        
+        <div className="mt-4">
+          <div className="mb-3 text-sm text-white/70">Фон</div>
+          <div className="grid grid-cols-2 gap-3">
+            {BACKGROUNDS.map((background) => (
+              <button
+                key={background.id}
+                onClick={() => {
+                  if (editingPiggyId) {
+                    updatePiggy(editingPiggyId, { background: background.id });
+                  }
+                }}
+                className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
+                  (() => {
+                    const piggy = piggies.find(p => p.id === editingPiggyId);
+                    return piggy?.background === background.id ? "ring-2 ring-[#5d2efc]" : "ring-0";
+                  })()
+                }`}
+              >
+                <div 
+                  className={`aspect-video rounded-lg ${
+                    background.image 
+                      ? 'bg-cover bg-center' 
+                      : `bg-gradient-to-r ${background.gradient}`
+                  }`}
+                  style={background.image ? { backgroundImage: `url(${background.image})` } : {}}
+                />
+                <div className="mt-2 text-xs text-white/80">{background.label}</div>
+                {(() => {
+                  const piggy = piggies.find(p => p.id === editingPiggyId);
+                  return piggy?.background === background.id && (
+                    <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
+                        <path d="M20 6L9 17l-5-5" />
+                      </svg>
+                    </div>
+                  );
+                })()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setPiggyCustomizationModal(false)}
+            className="flex-1 rounded-xl bg-white/10 py-2 font-semibold"
+          >
+            Готово
           </button>
         </div>
       </Modal>

@@ -5,6 +5,10 @@ import App from "./App";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <div className="min-h-dvh w-full flex justify-center bg-neutral-900">
+      <div className="w-full max-w-[430px] min-h-dvh bg-[#0f0f0f] overflow-hidden">
+        <App />
+      </div>
+    </div>
   </React.StrictMode>
 );

@@ -2,7 +2,7 @@
   "name": "wb-kids",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Zerloxxx.github.io/rwb-app",
+  "homepage": "/rwb-app",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",

@@ -7,7 +7,7 @@ const LS_KEYS = {
   active: "rwb_rewards_active",
 };
 
-const defaultActive = { cardTheme: "card_wb_purple", appTheme: null, penguinWear: "penguin_default" };
+const defaultActive = { cardTheme: "card_wb_purple", appTheme: null, penguinWear: "penguin_default", topBackground: "default" };
 
 function readJSON(key, fallback) {
   if (typeof window === "undefined") return fallback;
@@ -74,6 +74,11 @@ export function CoinsProvider({ children }) {
       return true;
     }
     if (type === "penguinWear" && id === "penguin_default") {
+      setActive((prev) => ({ ...prev, [type]: id }));
+      return true;
+    }
+    // Разрешаем все фоны верхней панели без покупки
+    if (type === "topBackground") {
       setActive((prev) => ({ ...prev, [type]: id }));
       return true;
     }

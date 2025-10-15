@@ -66,7 +66,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-28 text-white">
       <header
-        className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30"
+        className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30"
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
       >
         <div className="flex items-center gap-2">
@@ -90,7 +90,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
         )}
       </header>
 
-      <section className="rounded-t-[28px] bg-gradient-to-b from-[#4338ca] via-[#6d28d9] to-[#a855f7] px-5 pb-6 pt-5">
+      <section className="rounded-t-[28px] bg-gradient-to-b from-[#4338ca] via-[#6d28d9] to-[#a855f7] px-5 pb-6 pt-20">
         {/* Карточка баланса родителя с фоном */}
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"

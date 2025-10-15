@@ -857,7 +857,7 @@ export default function Piggy({ onBack, role = "child" }) {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] text-white">
       <header
-        className="sticky top-0 z-40 flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
+        className="fixed top-0 left-0 right-0 z-40 flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
       >
         <button
@@ -873,7 +873,7 @@ export default function Piggy({ onBack, role = "child" }) {
         </div>
       </header>
 
-      <section className="px-5">
+      <section className="px-5 pt-20">
         <div 
           className={`relative min-h-[100px] rounded-[24px] ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}
           style={getCurrentTopBackgroundStyle()}

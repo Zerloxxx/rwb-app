@@ -2,7 +2,7 @@ export default function Education({ onBack }) {
   return (
     <div className="screen-shell screen-shell--compact mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] text-white">
       <header
-        className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-4 shadow-md shadow-black/30"
+        className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-4 shadow-md shadow-black/30"
       >
         <button
           type="button"

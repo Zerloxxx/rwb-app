@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/rwb-app/static/js/main.66bf46da.js",
+    "main.js": "/rwb-app/static/js/main.f94f4605.js",
     "static/media/penguin.png": "/rwb-app/static/media/penguin.a1bdad81b7ee317a95c5.png",
     "index.html": "/rwb-app/index.html",
-    "main.66bf46da.js.map": "/rwb-app/static/js/main.66bf46da.js.map"
+    "main.f94f4605.js.map": "/rwb-app/static/js/main.f94f4605.js.map"
   },
   "entrypoints": [
-    "static/js/main.66bf46da.js"
+    "static/js/main.f94f4605.js"
   ]
 }

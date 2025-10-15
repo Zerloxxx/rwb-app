@@ -439,8 +439,9 @@ export default function Piggy({ onBack, role = "child" }) {
         }
         transfer = { status: "success", type: "withdraw", amount: actual, piggy: target };
         
-        // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
-        if (role === "parent" && owner === "family") {
+        // Возвращаем деньги на правильную карту в зависимости от роли
+        if (role === "parent") {
+          // Родитель получает деньги на свой баланс
           return {
             ...prev,
             parentCardBalance: currentParentCard + actual,
@@ -449,6 +450,7 @@ export default function Piggy({ onBack, role = "child" }) {
             ),
           };
         } else {
+          // Ребенок получает деньги на свой баланс
           return {
             ...prev,
             cardBalance: currentCard + actual,
@@ -466,10 +468,12 @@ export default function Piggy({ onBack, role = "child" }) {
 
       // Определяем, с какой карты списывать деньги
       let sourceBalance, sourceKey;
-      if (role === "parent" && owner === "family") {
+      if (role === "parent") {
+        // Родитель всегда списывает со своего баланса, независимо от типа копилки
         sourceBalance = currentParentCard;
         sourceKey = "parentCardBalance";
       } else {
+        // Ребенок списывает со своего баланса
         sourceBalance = currentCard;
         sourceKey = "cardBalance";
       }
@@ -550,8 +554,9 @@ export default function Piggy({ onBack, role = "child" }) {
         };
       }
 
-      // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
-      if (role === "parent" && owner === "family") {
+      // Возвращаем деньги на правильную карту в зависимости от роли
+      if (role === "parent") {
+        // Родитель получает деньги на свой баланс
         const nextParentCard = Math.max(0, Number(prev.parentCardBalance) || 0) + currentAmount;
         return {
           ...prev,
@@ -559,6 +564,7 @@ export default function Piggy({ onBack, role = "child" }) {
           piggies: prev.piggies.filter((item) => item.id !== id),
         };
       } else {
+        // Ребенок получает деньги на свой баланс
         const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + currentAmount;
         return {
           ...prev,
@@ -628,8 +634,9 @@ export default function Piggy({ onBack, role = "child" }) {
       const amount = Math.max(0, Number(target.amount) || 0);
       const owner = target.owner === "family" ? "family" : "child";
       
-      // Возвращаем деньги на правильную карту в зависимости от роли и владельца копилки
-      if (role === "parent" && owner === "family") {
+      // Возвращаем деньги на правильную карту в зависимости от роли
+      if (role === "parent") {
+        // Родитель получает деньги на свой баланс
         const nextParentCard = Math.max(0, Number(prev.parentCardBalance) || 0) + amount;
         return {
           ...prev,
@@ -637,6 +644,7 @@ export default function Piggy({ onBack, role = "child" }) {
           piggies: prev.piggies.filter((item) => item.id !== id),
         };
       } else {
+        // Ребенок получает деньги на свой баланс
         const nextCard = Math.max(0, Number(prev.cardBalance) || 0) + amount;
         return {
           ...prev,

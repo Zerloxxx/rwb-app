@@ -71,7 +71,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
 
   return (
     <div className="screen-shell mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
+      <header className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
         <div className="flex items-center gap-2">
           <div className="rounded-full bg-white px-4 py-1 shadow-md">
             <img src={logoRWB} alt="Логотип RWB" className="h-5 w-auto object-contain" />

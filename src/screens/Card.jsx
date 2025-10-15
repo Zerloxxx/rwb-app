@@ -229,7 +229,7 @@ export default function Card({ onBack, role = "child" }) {
 
   return (
     <div className="screen-shell mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] text-white">
-      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
+      <header className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
         <div className="flex items-center gap-3">
           <button
             type="button"

@@ -15,6 +15,7 @@ const THEMES = [
   { id: "app_night", label: "Тёмная" },
   { id: "app_wb", label: "WB Фиолет" },
   { id: "app_russ", label: "Russ Голубая" },
+  { id: "app_space", label: "Космос" },
 ];
 
 const LEVEL_TITLES = [
@@ -151,7 +152,21 @@ export default function Profile() {
         <>
           <section className="px-5 pt-5">
             {/* Приветствие и аватар */}
-            <div className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30" style={{ backgroundImage: "url(./profile-space.jpg)", backgroundSize: "cover", backgroundPosition: "center" }}>
+            <div
+              className="relative overflow-hidden rounded-[24px] p-5 shadow-lg shadow-black/30"
+              style={{
+                backgroundImage:
+                  (active?.appTheme || profile.theme) === "app_space"
+                    ? "url(./profile-space.jpg)"
+                    : (active?.appTheme || profile.theme) === "app_russ"
+                    ? "linear-gradient(90deg, rgba(59,130,246,1) 0%, rgba(56,189,248,1) 100%)"
+                    : (active?.appTheme || profile.theme) === "app_wb"
+                    ? "linear-gradient(90deg, #7a44ff 0%, #b35cff 100%)"
+                    : "linear-gradient(90deg, #111827 0%, #1f2937 100%)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-white/10">
               <img src={currentAvatarSrc} alt="Пингвин" className="h-full w-full object-contain" />

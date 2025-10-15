@@ -293,8 +293,21 @@ export default function Piggy({ onBack, role = "child" }) {
   const { ownedRewards, isOwned, activateReward, active } = useCoins();
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
-  const [selectedSkin, setSelectedSkin] = useState(() => active?.penguinWear || "penguin_default");
-  const [selectedTopBackground, setSelectedTopBackground] = useState(() => active?.topBackground || "default");
+  const [selectedSkin, setSelectedSkin] = useState(() => {
+    // Приоритет: сохранённое пользователем значение -> активный скин из магазина -> дефолт
+    try {
+      const saved = typeof window !== "undefined" ? window.localStorage.getItem("wbkids.topBanner.skin") : null;
+      if (saved) return saved;
+    } catch {}
+    return active?.penguinWear || "penguin_default";
+  });
+  const [selectedTopBackground, setSelectedTopBackground] = useState(() => {
+    try {
+      const saved = typeof window !== "undefined" ? window.localStorage.getItem("wbkids.topBanner.background") : null;
+      if (saved) return saved;
+    } catch {}
+    return active?.topBackground || "default";
+  });
   const [topCustomizationModal, setTopCustomizationModal] = useState(false);
   const piggies = Array.isArray(state?.piggies) ? state.piggies : EMPTY_LIST;
   const cardBalance = Math.max(0, Number(state?.cardBalance) || 0);
@@ -302,6 +315,17 @@ export default function Piggy({ onBack, role = "child" }) {
   useEffect(() => {
     savePiggyState(state);
   }, [state]);
+
+  // Сохраняем кастомизацию верхней копилки для ребёнка
+  useEffect(() => {
+    if (role !== "child") return;
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem("wbkids.topBanner.skin", selectedSkin);
+        window.localStorage.setItem("wbkids.topBanner.background", selectedTopBackground);
+      }
+    } catch {}
+  }, [role, selectedSkin, selectedTopBackground]);
 
   const totals = useMemo(() => {
     const childList = [];
@@ -450,7 +474,8 @@ export default function Piggy({ onBack, role = "child" }) {
       }
 
       const currentAmount = Math.max(0, Number(target.amount) || 0);
-      const currentCard = Math.max(0, Number(prev.cardBalance) || 0);
+      const currentChildCard = Math.max(0, Number(prev.cardBalance) || 0);
+      const currentParentCard = Math.max(0, Number(prev.parentCardBalance) || 0);
       const goal = Math.max(0, Number(target.goal) || 0);
       const remainingCapacity = goal > 0 ? Math.max(0, goal - currentAmount) : Number.POSITIVE_INFINITY;
 
@@ -461,9 +486,21 @@ export default function Piggy({ onBack, role = "child" }) {
           return prev;
         }
         transfer = { status: "success", type: "withdraw", amount: actual, piggy: target };
+        // Куда вернуть деньги при выводе:
+        // - родитель может выводить только из общих целей -> на карту родителя
+        // - ребёнок выводит из своих целей -> на карту ребёнка
+        if (role === "parent") {
+          return {
+            ...prev,
+            parentCardBalance: currentParentCard + actual,
+            piggies: prev.piggies.map((item) =>
+              item.id === id ? { ...item, amount: currentAmount - actual } : item
+            ),
+          };
+        }
         return {
           ...prev,
-          cardBalance: currentCard + actual,
+          cardBalance: currentChildCard + actual,
           piggies: prev.piggies.map((item) =>
             item.id === id ? { ...item, amount: currentAmount - actual } : item
           ),
@@ -475,9 +512,13 @@ export default function Piggy({ onBack, role = "child" }) {
         return prev;
       }
 
-      const actual = Math.min(amount, currentCard, remainingCapacity);
+      // С какого счета пополняем:
+      // - родитель пополняет со своей карты
+      // - ребёнок — со своей
+      const available = role === "parent" ? currentParentCard : currentChildCard;
+      const actual = Math.min(amount, available, remainingCapacity);
       if (actual <= 0) {
-        transfer = { status: currentCard <= 0 ? "insufficient" : "full", piggy: target };
+        transfer = { status: available <= 0 ? "insufficient" : "full", piggy: target };
         return prev;
       }
 
@@ -489,9 +530,18 @@ export default function Piggy({ onBack, role = "child" }) {
         capped: actual < amount,
       };
 
+      if (role === "parent") {
+        return {
+          ...prev,
+          parentCardBalance: currentParentCard - actual,
+          piggies: prev.piggies.map((item) =>
+            item.id === id ? { ...item, amount: currentAmount + actual } : item
+          ),
+        };
+      }
       return {
         ...prev,
-        cardBalance: currentCard - actual,
+        cardBalance: currentChildCard - actual,
         piggies: prev.piggies.map((item) =>
           item.id === id ? { ...item, amount: currentAmount + actual } : item
         ),

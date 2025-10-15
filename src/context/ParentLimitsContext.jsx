@@ -124,7 +124,26 @@ export const ParentLimitsProvider = ({ children }) => {
   };
 
   const updateCategoryRestrictions = (restrictions) => {
-    dispatch({ type: 'UPDATE_CATEGORY_RESTRICTIONS', payload: restrictions });
+    // Гарантируем эксклюзивность: категория не может быть и в allowed, и в blocked
+    const current = state.categoryRestrictions;
+    const nextAllowed = new Set(restrictions.allowedCategories ?? current.allowedCategories);
+    const nextBlocked = new Set(restrictions.blockedCategories ?? current.blockedCategories);
+    // Удаляем пересечения
+    for (const c of Array.from(nextAllowed)) {
+      if (nextBlocked.has(c)) nextBlocked.delete(c);
+    }
+    for (const c of Array.from(nextBlocked)) {
+      if (nextAllowed.has(c)) nextAllowed.delete(c);
+    }
+    dispatch({
+      type: 'UPDATE_CATEGORY_RESTRICTIONS',
+      payload: {
+        ...current,
+        ...restrictions,
+        allowedCategories: Array.from(nextAllowed),
+        blockedCategories: Array.from(nextBlocked)
+      }
+    });
   };
 
   const updateWhitelist = (whitelist) => {
@@ -226,6 +245,7 @@ export const useParentLimits = () => {
   }
   return context;
 };
+
 
 
 

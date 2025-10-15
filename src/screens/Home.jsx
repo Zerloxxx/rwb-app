@@ -100,7 +100,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
         </div>
       </header>
 
-      <section className="rounded-t-[28px] bg-gradient-to-b from-[#5d2efc] via-[#6a38f5] to-[#9b4dff] px-5 pb-6 pt-28">
+      <section className="rounded-t-[28px] bg-gradient-to-b from-[#5d2efc] via-[#6a38f5] to-[#9b4dff] px-5 pb-6 pt-24">
         <div className="flex flex-col gap-4">
           <button
             type="button"

@@ -972,7 +972,29 @@ export default function Piggy({ onBack, role = "child" }) {
             : "text-xs font-semibold text-white/50";
 
           return (
-            <div key={piggy.id} className="relative overflow-hidden rounded-[18px] bg-[#131318] p-4 ring-1 ring-white/5">
+            <div 
+              key={piggy.id} 
+              className={`relative overflow-hidden rounded-[18px] p-4 ring-1 ring-white/5 ${
+                (() => {
+                  const background = BACKGROUNDS.find(bg => bg.id === piggy.background) || BACKGROUNDS[0];
+                  if (background.image) {
+                    return 'bg-cover bg-center';
+                  }
+                  return `bg-gradient-to-br ${background.gradient}`;
+                })()
+              }`}
+              style={(() => {
+                const background = BACKGROUNDS.find(bg => bg.id === piggy.background) || BACKGROUNDS[0];
+                if (background.image) {
+                  return {
+                    backgroundImage: `url(${background.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
+                  };
+                }
+                return {};
+              })()}
+            >
               {isCelebrating ? <CelebrationBurst /> : null}
               <div className={isCompleted ? "pointer-events-none opacity-35" : ""}>
                 <div className="flex flex-wrap items-start justify-between gap-4">

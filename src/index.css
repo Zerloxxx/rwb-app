@@ -9,18 +9,32 @@
   }
 }
 @layer components {
+  :root {
+    --app-shell-max-width: 430px;
+    --app-header-offset: 104px;
+  }
+
   .sticky-header {
-    position: -webkit-sticky;
-    position: sticky;
+    position: fixed;
     top: 0;
-    top: max(env(safe-area-inset-top, 0px), 0px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(100%, var(--app-shell-max-width, 430px));
     z-index: 50;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 16px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--fixed-header-padding, 16px));
     backdrop-filter: blur(12px);
   }
 
   .sticky-header--tight {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 8px);
+    --fixed-header-padding: 8px;
+  }
+
+  .screen-shell {
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--screen-header-offset, var(--app-header-offset, 104px)));
+  }
+
+  .screen-shell--compact {
+    --screen-header-offset: 88px;
   }
 }
 .celebration-burst__spark,

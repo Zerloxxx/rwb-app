@@ -1,4 +1,4 @@
-import logoRWB from "../assets/rwb_clean.png";
+﻿import logoRWB from "../assets/rwb_clean.png";
 import usePiggyOverview from "../hooks/usePiggyOverview";
 
 const IconMenu = ({ className = "w-6 h-6" }) => (
@@ -64,8 +64,11 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
   const { childTotal, familyTotal, total, childCount, familyCount, cardBalance = 0, parentCardBalance = 0 } = usePiggyOverview();
 
   return (
-    <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30">
+    <div className="mx-auto w-[430px] min-h-screen bg-[#0b0b12] pb-28 text-white">
+      <header
+        className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30"
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}
+      >
         <div className="flex items-center gap-2">
           <div className="rounded-full bg-white px-4 py-1 shadow-md">
             <img src={logoRWB} alt="Логотип RWB" className="h-5 w-auto object-contain" />

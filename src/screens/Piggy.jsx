@@ -48,9 +48,9 @@ const PENGUIN_SKINS = [
 const BACKGROUNDS = [
   { id: "default", label: "По умолчанию", gradient: "from-[#7a44ff] to-[#b35cff]", ownedByDefault: true },
   { id: "blue_sky", label: "Голубое небо", gradient: "from-blue-400 to-sky-400", ownedByDefault: false },
-  { id: "cosmic_image", label: "Космический", image: "./cosmic-background.jpg", ownedByDefault: false },
-  { id: "sunny_field", label: "Солнечное поле", image: "./sunny-field-background.jpg", ownedByDefault: false },
-  { id: "cyberpunk_city", label: "Киберпанк город", image: "./cyberpunk-city-background.jpg", ownedByDefault: false },
+  { id: "cosmic_image", label: "Космический", image: "/cosmic-background.jpg", ownedByDefault: false },
+  { id: "sunny_field", label: "Солнечное поле", image: "/sunny-field-background.jpg", ownedByDefault: false },
+  { id: "cyberpunk_city", label: "Киберпанк город", image: "/cyberpunk-city-background.jpg", ownedByDefault: false },
 ];
 const PRESET_AMOUNTS = [100, 300, 500, 1000];
 const EMPTY_LIST = Object.freeze([]);
@@ -113,9 +113,11 @@ const AUTO_TOP_UP_INTERVAL = 60 * 1000;
 function Modal({ open, onClose, children, maxWidth = "max-w-sm" }) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center sm:p-6">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-      <div className={`relative w-full ${maxWidth} rounded-2xl bg-[#14141a] p-5 text-white ring-1 ring-white/10`}>
+      <div
+        className={`relative w-full ${maxWidth} max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl bg-[#14141a] p-5 text-white ring-1 ring-white/10 sm:max-h-[calc(100vh-4rem)]`}
+      >
         {children}
       </div>
     </div>
@@ -432,11 +434,13 @@ export default function Piggy({ onBack, role = "child" }) {
   };
 
   const getCurrentTopBackground = () => {
-    const background = BACKGROUNDS.find(bg => bg.id === selectedTopBackground);
+    const background = BACKGROUNDS.find((bg) => bg.id === selectedTopBackground);
     if (background?.image) {
       return `bg-[url('${background.image}')] bg-cover bg-center`;
     }
-    return background?.gradient || "from-[#7a44ff] to-[#b35cff]";
+    return background?.gradient
+      ? `bg-gradient-to-r ${background.gradient}`
+      : "bg-gradient-to-r from-[#7a44ff] to-[#b35cff]";
   };
 
   const summaryChips = [
@@ -857,7 +861,7 @@ export default function Piggy({ onBack, role = "child" }) {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="screen-shell mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] text-white" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header className="sticky-header flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
         <button
           type="button"
@@ -873,7 +877,7 @@ export default function Piggy({ onBack, role = "child" }) {
       </header>
 
       <section className="px-5">
-        <div className={`relative min-h-[100px] rounded-[24px] bg-gradient-to-r ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}>
+        <div className={`relative min-h-[100px] rounded-[24px] ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}>
           <div className="text-[26px] font-extrabold leading-none tabular-nums">{fmtRub(totals.total)}</div>
           <div className="mt-2 text-sm text-white/80">Копим мечты вместе с семьёй</div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/85">
@@ -1304,11 +1308,6 @@ export default function Piggy({ onBack, role = "child" }) {
     </div>
   );
 }
-
-
-
-
-
 
 
 

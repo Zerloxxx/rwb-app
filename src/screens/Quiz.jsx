@@ -120,8 +120,8 @@ export default function Quiz() {
   const warningPerfectFarm = prevBest === total;
 
   return (
-    <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
-      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+    <div className="screen-shell mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pb-4 shadow-md shadow-black/30">
         <button type="button" onClick={() => (window.location.hash = "#/learn")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
         <div className="text-base font-semibold">{quiz.title}</div>
         <div className="w-16" />
@@ -173,4 +173,3 @@ export default function Quiz() {
     </div>
   );
 }
-

@@ -17,8 +17,8 @@ export default function Shop() {
   const filtered = useMemo(() => (tab === "all" ? rewards : rewards.filter((r) => r.type === tab)), [tab]);
 
   return (
-    <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
-      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+    <div className="screen-shell mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pb-4 shadow-md shadow-black/30">
         <button type="button" onClick={() => (window.location.hash = "#/learn")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
         <div className="text-base font-semibold">Магазин наград</div>
         <div className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold">
@@ -45,4 +45,3 @@ export default function Shop() {
     </div>
   );
 }
-

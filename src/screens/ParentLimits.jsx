@@ -319,7 +319,7 @@ export default function ParentLimits() {
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
       {/* Заголовок */}
-      <header className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30 sm:flex-nowrap">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
         <button 
           type="button" 
           onClick={() => (window.location.hash = "#/parent")} 
@@ -327,8 +327,8 @@ export default function ParentLimits() {
         >
           Назад
         </button>
-        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">Лимиты и разрешения</div>
-        <div className="hidden sm:block sm:w-16"></div>
+        <div className="text-base font-semibold">Лимиты и разрешения</div>
+        <div className="w-16"></div>
       </header>
 
       {/* Вкладки */}

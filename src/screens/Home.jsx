@@ -71,31 +71,33 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header
-        className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
+        <div className="flex items-center gap-2">
           <div className="rounded-full bg-white px-4 py-1 shadow-md">
             <img src={logoRWB} alt="Логотип RWB" className="h-5 w-auto object-contain" />
           </div>
-          <div className="min-w-0 leading-tight">
+          <div className="leading-tight">
             <div className="text-xs text-white/60 sm:text-sm">RWB Банк</div>
-            <div className="truncate text-sm font-semibold sm:text-base">Режим: {roleLabel}</div>
+            <div className="text-sm font-semibold sm:text-base">Режим: {roleLabel}</div>
           </div>
         </div>
 
-        <div className="order-3 w-full rounded-full bg-white/10 px-3 py-1.5 text-sm text-center sm:order-none sm:w-auto">Счёт {balance}</div>
-
-        {onOpenRoleModal && (
-          <button
-            type="button"
-            onClick={onOpenRoleModal}
-            className="order-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 sm:order-none"
-            aria-label="Open role switcher"
-          >
-            <IconMenu className="h-5 w-5" />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 text-sm font-semibold">
+            <span aria-hidden="true">💰</span>
+            <span className="tabular-nums">{balance}</span>
+          </div>
+          {onOpenRoleModal && (
+            <button
+              type="button"
+              onClick={onOpenRoleModal}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
+              aria-label="Открыть смену роли"
+            >
+              <IconMenu className="h-5 w-5" />
+            </button>
+          )}
+        </div>
       </header>
 
       <section className="rounded-t-[28px] bg-gradient-to-b from-[#5d2efc] via-[#6a38f5] to-[#9b4dff] px-5 pb-6">

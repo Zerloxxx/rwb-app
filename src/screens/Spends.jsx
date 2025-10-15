@@ -749,9 +749,7 @@ export default function Spends({ onBack }) {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header
-        className="sticky-header flex flex-wrap items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
-      >
+      <header className="sticky-header flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
         <button
           onClick={onBack}
           className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
@@ -851,4 +849,3 @@ export default function Spends({ onBack }) {
     </div>
   );
 }
-

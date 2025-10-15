@@ -858,9 +858,7 @@ export default function Piggy({ onBack, role = "child" }) {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header
-        className="sticky-header flex flex-wrap items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
-      >
+      <header className="sticky-header flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
         <button
           type="button"
           onClick={onBack}
@@ -1306,7 +1304,6 @@ export default function Piggy({ onBack, role = "child" }) {
     </div>
   );
 }
-
 
 
 

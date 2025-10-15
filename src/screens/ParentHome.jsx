@@ -65,14 +65,12 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      <header
-        className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30 sm:flex-nowrap"
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 pt-4 pb-3 shadow-md shadow-black/30">
+        <div className="flex items-center gap-2">
           <div className="rounded-full bg-white px-4 py-1 shadow-md">
             <img src={logoRWB} alt="Логотип RWB" className="h-5 w-auto object-contain" />
           </div>
-          <div className="min-w-0 leading-tight">
+          <div className="leading-tight">
             <div className="text-sm text-white/60">RWB Банк</div>
             <div className="text-base font-semibold">Режим: Родитель</div>
           </div>
@@ -81,7 +79,7 @@ export default function ParentHome({ goto, onOpenRoleModal }) {
           <button
             type="button"
             onClick={onOpenRoleModal}
-            className="order-2 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 sm:order-none"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10"
             aria-label="Сменить профиль"
           >
             <IconMenu className="h-5 w-5" />

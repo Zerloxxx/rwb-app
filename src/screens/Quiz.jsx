@@ -121,10 +121,10 @@ export default function Quiz() {
 
   return (
     <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
-      <header className="sticky-header flex flex-wrap items-center justify-between gap-3 bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30 sm:flex-nowrap">
+      <header className="sticky-header flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
         <button type="button" onClick={() => (window.location.hash = "#/learn")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
-        <div className="min-w-0 text-base font-semibold sm:flex-1 sm:text-center">{quiz.title}</div>
-        <div className="hidden sm:block sm:w-16" />
+        <div className="text-base font-semibold">{quiz.title}</div>
+        <div className="w-16" />
       </header>
 
       <main className="space-y-4 p-5">
@@ -173,5 +173,4 @@ export default function Quiz() {
     </div>
   );
 }
-
 

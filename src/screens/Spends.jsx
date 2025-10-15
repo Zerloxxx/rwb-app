@@ -748,7 +748,7 @@ export default function Spends({ onBack }) {
     (isMonthView ? " bg-white text-black shadow shadow-black/20" : " text-white/80 hover:text-white");
 
   return (
-    <div className="mx-auto w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header
         className="sticky top-0 z-40 flex items-center gap-3 bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30"
         style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 16px)" }}

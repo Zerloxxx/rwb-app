@@ -7,12 +7,12 @@ export default function Learn() {
   const goto = (path) => (window.location.hash = `#${path}`);
 
   return (
-    <div className="mx-auto w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
+    <div className="mx-auto w-full max-w-[430px] min-h-screen bg-[#0b0b12] pb-24 text-white">
       {/* README: Добавляйте новые темы в src/data/quizzes.json.
          Каждая тема имеет slug, title, level, questions[].
          Прогресс сохраняется в localStorage по ключу rwb_quiz_progress.
          Лучший результат по теме хранится как bestCorrect/total. */}
-      <header className="sticky top-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
+      <header className="relative z-40 flex items-center justify-between bg-[#0b0b12] px-5 py-4 shadow-md shadow-black/30">
         <button onClick={() => (window.location.hash = "#/")} className="rounded-[12px] bg-white/10 px-3 py-1.5 text-sm hover:bg-white/20">Назад</button>
         <div className="text-base font-semibold">Обучение</div>
         <div className="flex items-center gap-2">

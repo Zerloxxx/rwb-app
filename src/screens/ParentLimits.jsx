@@ -195,14 +195,7 @@ export default function ParentLimits() {
                   const newBlocked = isBlocked
                     ? categoryRestrictions.blockedCategories.filter(id => id !== category.id)
                     : [...categoryRestrictions.blockedCategories, category.id];
-                  
-                  // Если добавляем в заблокированные, убираем из разрешенных
-                  const newAllowed = categoryRestrictions.allowedCategories.filter(id => id !== category.id);
-                  
-                  updateCategoryRestrictions({ 
-                    blockedCategories: newBlocked,
-                    allowedCategories: newAllowed
-                  });
+                  updateCategoryRestrictions({ blockedCategories: newBlocked });
                 }}
                 className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                   isBlocked 
@@ -231,14 +224,7 @@ export default function ParentLimits() {
                   const newAllowed = isAllowed
                     ? categoryRestrictions.allowedCategories.filter(id => id !== category.id)
                     : [...categoryRestrictions.allowedCategories, category.id];
-                  
-                  // Если добавляем в разрешенные, убираем из заблокированных
-                  const newBlocked = categoryRestrictions.blockedCategories.filter(id => id !== category.id);
-                  
-                  updateCategoryRestrictions({ 
-                    allowedCategories: newAllowed,
-                    blockedCategories: newBlocked
-                  });
+                  updateCategoryRestrictions({ allowedCategories: newAllowed });
                 }}
                 className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                   isAllowed 

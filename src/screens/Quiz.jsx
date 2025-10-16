@@ -100,13 +100,13 @@ export default function Quiz() {
     // Проверяем серию побед для еженедельной миссии
     const currentStreak = quizProgress?.streak || 0;
     if (correctCount >= Math.ceil(total * 0.8)) {
-      triggerMission("weekly_quiz_streak", 1);
-    }
-    
-    // Триггерим ежедневную миссию прохождения теста
-    triggerMission("daily_quiz_complete", 1);
-    
-    setShowResult(true);
+        triggerMission("weekly_quiz_streak", 1);
+      }
+      
+      // Триггерим ежедневную миссию прохождения теста
+      triggerMission("daily_quiz_complete", 1);
+      
+      setShowResult(true);
     finishedOnceRef.current = true;
   };
 

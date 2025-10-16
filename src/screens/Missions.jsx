@@ -101,7 +101,7 @@ export default function Missions() {
       </div>
 
       {/* Контент */}
-      <main className="px-5 pt-6">
+      <main className="px-5 pt-8">
         {getTabContent()}
       </main>
     </div>

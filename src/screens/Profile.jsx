@@ -235,7 +235,7 @@ export default function Profile() {
 
       {/* Вкладка разрешений */}
       {activeTab === "permissions" && (
-        <main className="px-5 pt-5">
+        <main className="px-5 pt-8">
           <ChildPermissions />
         </main>
       )}

@@ -41,8 +41,8 @@ const SettingsIcon = ({ className = "w-4 h-4" }) => (
 const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"];
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
-  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: true },
-  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: true },
+  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: false },
+  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: false },
 ];
 
 const BACKGROUNDS = [
@@ -293,6 +293,13 @@ export default function Piggy({ onBack, role = "child" }) {
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState(() => active?.penguinWear || "penguin_default");
+  
+  // Обновляем selectedSkin при изменении active.penguinWear
+  useEffect(() => {
+    if (active?.penguinWear) {
+      setSelectedSkin(active.penguinWear);
+    }
+  }, [active?.penguinWear]);
   const [selectedTopBackground, setSelectedTopBackground] = useState(() => active?.topBackground || "default");
   const [topCustomizationModal, setTopCustomizationModal] = useState(false);
   const [piggyCustomizationModal, setPiggyCustomizationModal] = useState(false);
@@ -1132,7 +1139,7 @@ export default function Piggy({ onBack, role = "child" }) {
                 ) : null}
               </div>
             </div>
-            {isCompleted ? (
+            {isCompleted && role !== "parent" ? (
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/70 px-4 text-center">
                 <div className="text-lg font-bold">Цель выполнена!</div>
                 <button
@@ -1245,27 +1252,41 @@ export default function Piggy({ onBack, role = "child" }) {
             <div className="mt-4">
               <div className="mb-3 text-sm text-white/70">Пингвин</div>
               <div className="grid grid-cols-3 gap-3">
-                {PENGUIN_SKINS.map((skin) => (
-                  <button
-                    key={skin.id}
-                    onClick={() => setSelectedSkin(skin.id)}
-                    className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
-                      selectedSkin === skin.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
-                    }`}
-                  >
-                    <div className="aspect-square overflow-hidden rounded-lg bg-white/10">
-                      <img src={skin.image} alt={skin.label} className="h-full w-full object-contain" />
-                    </div>
-                    <div className="mt-2 text-xs text-white/80">{skin.label}</div>
-                    {selectedSkin === skin.id && (
-                      <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
+                {PENGUIN_SKINS.map((skin) => {
+                  const owned = skin.ownedByDefault || isOwned(skin.id);
+                  return (
+                    <button
+                      key={skin.id}
+                      onClick={() => {
+                        if (owned) {
+                          setSelectedSkin(skin.id);
+                        } else {
+                          window.location.hash = "#/shop";
+                        }
+                      }}
+                      className={`relative overflow-hidden rounded-xl p-3 text-center transition ${
+                        selectedSkin === skin.id ? "ring-2 ring-[#5d2efc]" : "ring-0"
+                      } ${!owned ? "opacity-60" : ""}`}
+                    >
+                      <div className="aspect-square overflow-hidden rounded-lg bg-white/10">
+                        <img src={skin.image} alt={skin.label} className="h-full w-full object-contain" />
                       </div>
-                    )}
-                  </button>
-                ))}
+                      <div className="mt-2 text-xs text-white/80">{skin.label}</div>
+                      {selectedSkin === skin.id && owned && (
+                        <div className="absolute top-1 right-1 h-4 w-4 rounded-full bg-[#5d2efc] flex items-center justify-center">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-2 w-2 text-white">
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        </div>
+                      )}
+                      {!owned && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
+                          <div className="text-xs text-white font-semibold">Купить</div>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

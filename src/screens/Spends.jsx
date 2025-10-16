@@ -523,6 +523,8 @@ export default function Spends({ onBack }) {
 
   useEffect(() => {
     saveTransactions(transactions);
+    // Отправляем событие об обновлении трат
+    window.dispatchEvent(new CustomEvent('spendsUpdated'));
   }, [transactions]);
 
   const today = useMemo(() => {
@@ -687,7 +689,13 @@ export default function Spends({ onBack }) {
         );
       }
     }
-    setTransactions((prev) => [tx, ...extras, ...prev]);
+    
+    // Используем функциональное обновление для гарантии корректного состояния
+    setTransactions((prev) => {
+      const newTransactions = [tx, ...extras, ...prev];
+      console.log('Adding transaction:', tx, 'Total transactions:', newTransactions.length);
+      return newTransactions;
+    });
   };
 
   const requestRemove = (tx) => {
@@ -764,7 +772,7 @@ export default function Spends({ onBack }) {
         </div>
       </header>
 
-      <div className="space-y-5 px-5 pt-26">
+      <div className="space-y-5 px-5 pt-32">
         <div className="rounded-[22px] bg-gradient-to-r from-[#a855f7] via-[#6366f1] to-[#22d3ee] p-5 text-white shadow-lg">
           <div className="flex items-start justify-between gap-3">
             <div>

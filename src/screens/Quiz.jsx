@@ -148,15 +148,6 @@ export default function Quiz() {
           }}
         />
 
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={currentIndex === total - 1 ? finish : goNext}
-            className="rounded-[12px] bg-[#5d2efc] px-4 py-2 font-semibold hover:brightness-110"
-          >
-            {currentIndex === total - 1 ? "Завершить" : "Дальше"}
-          </button>
-        </div>
       </main>
 
       <ResultModal

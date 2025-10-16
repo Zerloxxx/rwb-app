@@ -1,8 +1,10 @@
+import { useMemo, useEffect, useState } from "react";
 import CTA from "../components/CTA";
 import { useCoins } from "../context/CoinsContext";
 import logoRWB from "../assets/rwb_clean.png";
 import usePiggyOverview from "../hooks/usePiggyOverview";
 import { getCardThemeStyle } from "../utils/cardThemes";
+import { loadStoredTransactions } from "../utils/spendsStorage";
 
 const IconQR = ({ className = "w-6 h-6" }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
@@ -69,6 +71,44 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
     backgroundPosition: "center",
   };
 
+  // Состояние для трат
+  const [monthlySpends, setMonthlySpends] = useState(0);
+
+  // Подсчет трат за текущий месяц
+  const calculateMonthlySpends = () => {
+    const transactions = loadStoredTransactions();
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    
+    return transactions
+      .filter(tx => {
+        const txDate = new Date(tx.date);
+        return txDate.getMonth() === currentMonth && txDate.getFullYear() === currentYear;
+      })
+      .reduce((sum, tx) => sum + (tx.amount || 0), 0);
+  };
+
+  // Обновляем траты при загрузке и изменении
+  useEffect(() => {
+    setMonthlySpends(calculateMonthlySpends());
+    
+    // Слушаем изменения в localStorage
+    const handleStorageChange = () => {
+      setMonthlySpends(calculateMonthlySpends());
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Слушаем кастомное событие обновления трат
+    window.addEventListener('spendsUpdated', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('spendsUpdated', handleStorageChange);
+    };
+  }, []);
+
   return (
     <div className="screen-shell mx-auto w-full max-w-[430px] min-h-[100svh] bg-[#0b0b12] pb-28 text-white" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between bg-[#0b0b12] px-5 pb-3 shadow-md shadow-black/30">
@@ -133,7 +173,7 @@ export default function Home({ goto, role = "child", onOpenRoleModal }) {
             <div className="text-xs font-semibold uppercase tracking-wide text-white/65">Траты за месяц</div>
             <div className="flex w-full flex-wrap items-end justify-between gap-3">
               <div>
-                <div className="text-[28px] font-extrabold tabular-nums">{formatCurrency(0)}</div>
+                <div className="text-[28px] font-extrabold tabular-nums">{formatCurrency(monthlySpends)}</div>
                 <div className="mt-1 text-xs text-white/60">Посмотреть отчёт и детали</div>
               </div>
               <span className="inline-flex items-center justify-center rounded-full bg-white/12 px-4 py-1.5 text-xs font-semibold text-white/85">

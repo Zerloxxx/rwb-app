@@ -339,25 +339,39 @@ function AddTransactionModal({ open, onClose, onSubmit }) {
 
   useEffect(() => {
     if (open) {
+      console.log('Modal opened, resetting form');
       setAmount("");
       setCategory(CATEGORIES[0].id);
       setNote("");
       setDate(today);
+    } else {
+      console.log('Modal closed');
     }
   }, [open, today]);
 
   const submit = () => {
     const numeric = Math.round(Number(amount));
     if (!numeric || numeric <= 0) {
+      console.log('Invalid amount:', amount);
       return;
     }
-    onSubmit({
+    
+    const payload = {
       amount: numeric,
       category,
       note: note.trim(),
       date,
-    });
-    onClose();
+    };
+    
+    console.log('Submitting transaction:', payload);
+    
+    // Сначала вызываем onSubmit, потом закрываем
+    onSubmit(payload);
+    
+    // Небольшая задержка перед закрытием для гарантии обработки
+    setTimeout(() => {
+      onClose();
+    }, 100);
   };
 
   const quickAdd = (value) => {
@@ -667,6 +681,8 @@ export default function Spends({ onBack }) {
   const isNextDisabled = isMonthView ? monthShift === 0 : dayShift === 0;
 
   const handleAddTransaction = (payload) => {
+    console.log('handleAddTransaction called with:', payload);
+    
     const date = inputDateToUTC(payload.date);
     const tx = normalizeTransaction({
       id: makeId(),
@@ -677,6 +693,9 @@ export default function Spends({ onBack }) {
       createdAt: new Date().toISOString(),
       monthKey: makeMonthKey(date),
     });
+    
+    console.log('Normalized transaction:', tx);
+    
     const extras = [];
     if (typeof applyRoundupToTransaction === "function") {
       const result = applyRoundupToTransaction(tx);
@@ -693,6 +712,7 @@ export default function Spends({ onBack }) {
     // Используем функциональное обновление для гарантии корректного состояния
     setTransactions((prev) => {
       const newTransactions = [tx, ...extras, ...prev];
+      console.log('Previous transactions count:', prev.length);
       console.log('Adding transaction:', tx, 'Total transactions:', newTransactions.length);
       return newTransactions;
     });
@@ -843,7 +863,10 @@ export default function Spends({ onBack }) {
       </div>
 
       <button
-        onClick={() => setModalOpen(true)}
+        onClick={() => {
+          console.log('Opening modal, current modalOpen:', modalOpen);
+          setModalOpen(true);
+        }}
         className="fixed bottom-5 left-1/2 flex h-14 w-14 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-to-r from-[#ec4899] to-[#a855f7] shadow-lg shadow-fuchsia-500/40"
         aria-label="Добавить трату"
         type="button"
@@ -851,7 +874,14 @@ export default function Spends({ onBack }) {
         <IconPlus className="h-7 w-7" />
       </button>
 
-      <AddTransactionModal open={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleAddTransaction} />
+      <AddTransactionModal 
+        open={modalOpen} 
+        onClose={() => {
+          console.log('Closing modal');
+          setModalOpen(false);
+        }} 
+        onSubmit={handleAddTransaction} 
+      />
 
       <ConfirmDeleteModal open={confirmDelete.open} onClose={cancelRemove} onConfirm={confirmRemove} transaction={confirmDelete.tx} />
     </div>

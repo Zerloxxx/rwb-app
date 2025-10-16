@@ -618,13 +618,20 @@ export default function Piggy({ onBack, role = "child" }) {
 
     updatePiggy(id, (prevPiggy) => {
       const todayKey = toDayKey(new Date());
-      const prevAuto = prevPiggy.autoTopUp;
-      const prevLast = prevAuto ? toDayKey(prevAuto.lastApplied) : null;
+      const currentSettings = prevPiggy.autoTopUpSettings || { parent: null, child: null };
+      const currentAuto = role === "parent" ? currentSettings.parent : currentSettings.child;
+      const prevLast = currentAuto ? toDayKey(currentAuto.lastApplied) : null;
       const normalizedLast = prevLast && todayKey && prevLast <= todayKey ? prevLast : todayKey;
+      
+      const newAutoTopUp = {
+        amount,
+        lastApplied: normalizedLast || null,
+      };
+
       return {
-        autoTopUp: {
-          amount,
-          lastApplied: normalizedLast || null,
+        autoTopUpSettings: {
+          ...currentSettings,
+          [role]: newAutoTopUp,
         },
       };
     });
@@ -640,7 +647,15 @@ export default function Piggy({ onBack, role = "child" }) {
       return;
     }
 
-    updatePiggy(id, { autoTopUp: null });
+    updatePiggy(id, (prevPiggy) => {
+      const currentSettings = prevPiggy.autoTopUpSettings || { parent: null, child: null };
+      return {
+        autoTopUpSettings: {
+          ...currentSettings,
+          [role]: null,
+        },
+      };
+    });
     closeAutoModal();
     processAutoTopUps();
   };
@@ -690,75 +705,102 @@ export default function Piggy({ onBack, role = "child" }) {
       let changed = false;
 
       const nextPiggies = piggiesList.map((piggy) => {
-        const rawAuto = piggy.autoTopUp;
-        const amountPerDay = clampPositive(rawAuto?.amount);
-        if (amountPerDay <= 0) {
-          if (rawAuto) {
-            changed = true;
-            return { ...piggy, autoTopUp: null };
-          }
-          return piggy;
-        }
-
-        const lastApplied = toDayKey(rawAuto?.lastApplied);
-        const pendingDays = enumeratePendingAutoDays(lastApplied, todayKey);
-        const goal = Math.max(0, Number(piggy.goal) || 0);
+        const autoSettings = piggy.autoTopUpSettings || { parent: null, child: null };
+        
+        // Process both parent and child autopopulation
+        let updatedSettings = { ...autoSettings };
         let piggyAmount = Math.max(0, Number(piggy.amount) || 0);
-        let deposited = 0;
-        let processedDays = 0;
-        let latestApplied = lastApplied;
+        let totalDeposited = 0;
+        let piggyChanged = false;
+        
+        // Process parent autopopulation
+        if (autoSettings.parent) {
+          const parentAuto = autoSettings.parent;
+          const parentAmountPerDay = clampPositive(parentAuto.amount);
+          if (parentAmountPerDay > 0) {
+            const lastApplied = toDayKey(parentAuto.lastApplied);
+            const pendingDays = enumeratePendingAutoDays(lastApplied, todayKey);
+            const goal = Math.max(0, Number(piggy.goal) || 0);
+            let deposited = 0;
+            let processedDays = 0;
+            let latestApplied = lastApplied;
 
-        for (const dayKey of pendingDays) {
-          if (cardBalance <= 0) {
-            break;
-          }
-          if (goal > 0 && piggyAmount >= goal) {
-            break;
-          }
-          const capacity = goal > 0 ? Math.max(0, goal - piggyAmount) : Number.POSITIVE_INFINITY;
-          const actual = Math.min(amountPerDay, capacity, cardBalance);
-          if (actual <= 0) {
-            break;
-          }
-          piggyAmount += actual;
-          cardBalance -= actual;
-          deposited += actual;
-          processedDays += 1;
-          latestApplied = dayKey;
-          if (goal > 0 && piggyAmount >= goal) {
-            break;
+            for (const dayKey of pendingDays) {
+              if (cardBalance <= 0) break;
+              if (goal > 0 && piggyAmount >= goal) break;
+              const capacity = goal > 0 ? Math.max(0, goal - piggyAmount) : Number.POSITIVE_INFINITY;
+              const actual = Math.min(parentAmountPerDay, capacity, cardBalance);
+              if (actual <= 0) break;
+              piggyAmount += actual;
+              cardBalance -= actual;
+              deposited += actual;
+              processedDays += 1;
+              latestApplied = dayKey;
+            }
+
+            if (deposited > 0) {
+              totalDeposited += deposited;
+              piggyChanged = true;
+              updatedSettings.parent = {
+                amount: parentAmountPerDay,
+                lastApplied: latestApplied,
+              };
+            }
           }
         }
+        
+        // Process child autopopulation
+        if (autoSettings.child) {
+          const childAuto = autoSettings.child;
+          const childAmountPerDay = clampPositive(childAuto.amount);
+          if (childAmountPerDay > 0) {
+            const lastApplied = toDayKey(childAuto.lastApplied);
+            const pendingDays = enumeratePendingAutoDays(lastApplied, todayKey);
+            const goal = Math.max(0, Number(piggy.goal) || 0);
+            let deposited = 0;
+            let processedDays = 0;
+            let latestApplied = lastApplied;
 
-        const normalizedLast = latestApplied || lastApplied || null;
-        const nextAutoTopUp = {
-          amount: amountPerDay,
-          lastApplied: normalizedLast,
-        };
+            for (const dayKey of pendingDays) {
+              if (cardBalance <= 0) break;
+              if (goal > 0 && piggyAmount >= goal) break;
+              const capacity = goal > 0 ? Math.max(0, goal - piggyAmount) : Number.POSITIVE_INFINITY;
+              const actual = Math.min(childAmountPerDay, capacity, cardBalance);
+              if (actual <= 0) break;
+              piggyAmount += actual;
+              cardBalance -= actual;
+              deposited += actual;
+              processedDays += 1;
+              latestApplied = dayKey;
+            }
 
-        if (deposited > 0) {
+            if (deposited > 0) {
+              totalDeposited += deposited;
+              piggyChanged = true;
+              updatedSettings.child = {
+                amount: childAmountPerDay,
+                lastApplied: latestApplied,
+              };
+            }
+          }
+        }
+        
+        if (piggyChanged) {
           changed = true;
-          operations.push({
-            id: piggy.id,
-            name: piggy.name,
-            amount: deposited,
-            days: processedDays,
-          });
+          if (totalDeposited > 0) {
+            appendStoredTransaction({
+              amount: totalDeposited,
+              category: "other",
+              note: `Автопополнение копилки "${piggy.name || "Без названия"}"`,
+            });
+          }
           return {
             ...piggy,
             amount: piggyAmount,
-            autoTopUp: nextAutoTopUp,
+            autoTopUpSettings: updatedSettings,
           };
         }
-
-        if ((rawAuto?.amount ?? null) !== amountPerDay || (lastApplied || null) !== (normalizedLast || null)) {
-          changed = true;
-          return {
-            ...piggy,
-            autoTopUp: nextAutoTopUp,
-          };
-        }
-
+        
         return piggy;
       });
 
@@ -984,8 +1026,12 @@ export default function Piggy({ onBack, role = "child" }) {
           const isCompleted = goal > 0 && amount >= goal;
           const isCelebrating = celebrations.some((item) => item.id === piggy.id);
 
-          const autoTopUpAmount = clampPositive(piggy.autoTopUp?.amount);
+          const autoSettings = piggy.autoTopUpSettings || { parent: null, child: null };
+          const currentAuto = role === "parent" ? autoSettings.parent : autoSettings.child;
+          const parentAuto = autoSettings.parent;
+          const autoTopUpAmount = clampPositive(currentAuto?.amount);
           const autoTopUpActive = autoTopUpAmount > 0;
+          const parentAutoAmount = clampPositive(parentAuto?.amount);
           const autoTopUpButtonClasses = [
             "col-span-2",
             "sm:col-span-4",
@@ -1100,10 +1146,20 @@ export default function Piggy({ onBack, role = "child" }) {
                 <Progress value={amount} max={Math.max(1, goal)} />
               </div>
 
-              {autoTopUpActive ? (
-                <div className="mt-3 flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs text-white/70">
-                  <span>Автопополнение</span>
-                  <span className="font-semibold text-white">по {fmtRub(autoTopUpAmount)} в день</span>
+              {(autoTopUpActive || parentAutoAmount > 0) ? (
+                <div className="mt-3 space-y-2">
+                  {autoTopUpActive && (
+                    <div className="flex items-center justify-between rounded-xl bg-white/5 px-3 py-2 text-xs text-white/70">
+                      <span>Автопополнение {role === "parent" ? "(родитель)" : "(ребенок)"}</span>
+                      <span className="font-semibold text-white">по {fmtRub(autoTopUpAmount)} в день</span>
+                    </div>
+                  )}
+                  {parentAutoAmount > 0 && role === "child" && (
+                    <div className="flex items-center justify-between rounded-xl bg-blue-500/20 px-3 py-2 text-xs text-blue-200">
+                      <span>Автопополнение от родителя</span>
+                      <span className="font-semibold text-blue-100">по {fmtRub(parentAutoAmount)} в день</span>
+                    </div>
+                  )}
                 </div>
               ) : null}
 

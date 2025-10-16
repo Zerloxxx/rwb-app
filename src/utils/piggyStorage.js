@@ -70,6 +70,19 @@ const normalizeAutoTopUp = (raw = null) => {
   };
 };
 
+const normalizeAutoTopUpSettings = (raw = null) => {
+  if (!raw || typeof raw !== "object") {
+    return {
+      parent: null,
+      child: null
+    };
+  }
+  return {
+    parent: normalizeAutoTopUp(raw.parent),
+    child: normalizeAutoTopUp(raw.child)
+  };
+};
+
 const normalizePiggy = (raw = {}) => {
   const owner = raw.owner === "family" ? "family" : "child";
   const name = (raw.name || "Моя цель").toString().slice(0, 60);
@@ -82,7 +95,20 @@ const normalizePiggy = (raw = {}) => {
     const date = new Date(raw.createdAt);
     return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
   })();
-  const autoTopUp = normalizeAutoTopUp(raw.autoTopUp);
+  // Backward compatibility: if autoTopUp exists but autoTopUpSettings doesn't, migrate it
+  let autoTopUpSettings;
+  if (raw.autoTopUpSettings) {
+    autoTopUpSettings = normalizeAutoTopUpSettings(raw.autoTopUpSettings);
+  } else if (raw.autoTopUp) {
+    // Migrate old single autoTopUp to new structure
+    const migratedAutoTopUp = normalizeAutoTopUp(raw.autoTopUp);
+    autoTopUpSettings = {
+      parent: null,
+      child: migratedAutoTopUp
+    };
+  } else {
+    autoTopUpSettings = normalizeAutoTopUpSettings(null);
+  }
 
   return {
     id: raw.id || makeId(),
@@ -93,7 +119,7 @@ const normalizePiggy = (raw = {}) => {
     background,
     owner,
     createdAt,
-    autoTopUp,
+    autoTopUpSettings,
   };
 };
 

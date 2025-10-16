@@ -263,7 +263,7 @@ export default function Card({ onBack, role = "child" }) {
         </div>
       </header>
 
-      <section className="space-y-6 px-5 pb-20 pt-26">
+      <section className="space-y-6 px-5 pb-20 pt-32">
         <div
           className="relative overflow-hidden rounded-[24px] p-5 text-white shadow-lg shadow-black/30"
           style={{ ...effectiveThemeStyle, minHeight: 200 }}

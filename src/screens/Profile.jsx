@@ -119,34 +119,6 @@ export default function Profile() {
         <div className="w-16" />
       </header>
 
-      {/* Вкладки */}
-      <div className="px-5 pt-4">
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`whitespace-nowrap rounded-[12px] px-4 py-2 text-sm font-medium transition flex items-center gap-2 ${
-              activeTab === "overview" 
-                ? "bg-[#5d2efc] text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
-          >
-            <span>👤</span>
-            <span>Обзор</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("permissions")}
-            className={`whitespace-nowrap rounded-[12px] px-4 py-2 text-sm font-medium transition flex items-center gap-2 ${
-              activeTab === "permissions" 
-                ? "bg-[#5d2efc] text-white" 
-                : "bg-white/10 text-white/70 hover:bg-white/20"
-            }`}
-          >
-            <span>🔒</span>
-            <span>Разрешения</span>
-          </button>
-        </div>
-      </div>
-
       {/* Контент вкладок */}
       {activeTab === "overview" && (
         <>
@@ -184,6 +156,34 @@ export default function Profile() {
           </div>
         </div>
       </section>
+
+      {/* Вкладки */}
+      <div className="px-5 pt-4">
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`whitespace-nowrap rounded-[12px] px-4 py-2 text-sm font-medium transition flex items-center gap-2 ${
+              activeTab === "overview" 
+                ? "bg-[#5d2efc] text-white" 
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
+          >
+            <span>👤</span>
+            <span>Обзор</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("permissions")}
+            className={`whitespace-nowrap rounded-[12px] px-4 py-2 text-sm font-medium transition flex items-center gap-2 ${
+              activeTab === "permissions" 
+                ? "bg-[#5d2efc] text-white" 
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
+          >
+            <span>🔒</span>
+            <span>Разрешения</span>
+          </button>
+        </div>
+      </div>
 
       {/* Миссии */}
       <section className="px-5 pt-5">
@@ -235,7 +235,7 @@ export default function Profile() {
 
       {/* Вкладка разрешений */}
       {activeTab === "permissions" && (
-        <main className="px-5 pt-26">
+        <main className="px-5 pt-5">
           <ChildPermissions />
         </main>
       )}

@@ -41,8 +41,8 @@ const SettingsIcon = ({ className = "w-4 h-4" }) => (
 const COLORS = ["#7c3aed", "#2563eb", "#16a34a", "#ea580c", "#db2777", "#0891b2"];
 const PENGUIN_SKINS = [
   { id: "penguin_default", label: "Классика", image: defaultPenguin, ownedByDefault: true },
-  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: false },
-  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: false },
+  { id: "penguin_cosmo", label: "Космонавт", image: "./penguin-cosmo.png", ownedByDefault: true },
+  { id: "penguin_racer", label: "Гонщик", image: "./penguin-racer.png", ownedByDefault: true },
 ];
 
 const BACKGROUNDS = [

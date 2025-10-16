@@ -832,7 +832,13 @@ export default function Piggy({ onBack, role = "child" }) {
     return () => clearInterval(intervalId);
   }, [processAutoTopUps]);
 
-  const canEdit = (piggy) => (piggy.owner === "family" ? role === "parent" : true);
+  const canEdit = (piggy) => {
+    if (piggy.owner === "family") {
+      return role === "parent"; // Only parent can edit family piggy banks
+    } else {
+      return role !== "parent"; // Only child can edit child piggy banks
+    }
+  };
 
   const canManageAutoTopUp = (piggy) => {
     if (role === "parent") {
@@ -1013,7 +1019,9 @@ export default function Piggy({ onBack, role = "child" }) {
         {filteredPiggies.length === 0 && (
           <div className="rounded-[18px] bg-[#131318] p-6 text-center text-white/70">
             {ownerFilter === "family"
-              ? "Общих целей пока нет. Попросите родителя добавить новую."
+              ? (role === "parent" 
+                  ? "Общих целей пока нет. Можете создать новую."
+                  : "Общих целей пока нет. Попросите родителя добавить новую.")
               : "Создайте первую цель и начните копить."}
           </div>
         )}

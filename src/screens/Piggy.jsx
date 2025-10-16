@@ -308,6 +308,7 @@ export default function Piggy({ onBack, role = "child" }) {
   const [editingPiggyId, setEditingPiggyId] = useState(null);
   const piggies = Array.isArray(state?.piggies) ? state.piggies : EMPTY_LIST;
   const cardBalance = Math.max(0, Number(state?.cardBalance) || 0);
+  const parentCardBalance = Math.max(0, Number(state?.parentCardBalance) || 0);
 
   useEffect(() => {
     savePiggyState(state);
@@ -403,7 +404,7 @@ export default function Piggy({ onBack, role = "child" }) {
     const summaryChips = [
       { label: role === "parent" ? "Копилки ребенка" : "Мои копилки", value: fmtRub(totals.childTotal) },
       { label: "Семейные копилки", value: fmtRub(totals.familyTotal) },
-      { label: "Баланс карты", value: fmtRub(cardBalance) },
+      { label: "Баланс карты", value: fmtRub(role === "parent" ? parentCardBalance : cardBalance) },
     ];
 
   const depositLabel = (owner) => {

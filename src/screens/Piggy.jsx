@@ -401,7 +401,7 @@ export default function Piggy({ onBack, role = "child" }) {
   const filteredPiggies = ownerFilter === "family" ? totals.familyList : totals.childList;
 
     const summaryChips = [
-      { label: "Мои копилки", value: fmtRub(totals.childTotal) },
+      { label: role === "parent" ? "Копилки ребенка" : "Мои копилки", value: fmtRub(totals.childTotal) },
       { label: "Семейные копилки", value: fmtRub(totals.familyTotal) },
       { label: "Баланс карты", value: fmtRub(cardBalance) },
     ];

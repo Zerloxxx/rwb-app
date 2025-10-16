@@ -16,7 +16,7 @@ export default function Education({ onBack }) {
         <div className="w-14" />
       </header>
 
-      <main className="space-y-4 px-5 pt-30 pb-5">
+      <main className="space-y-4 px-5 pt-36 pb-5">
         <section className="rounded-[24px] bg-[#1a1a1f] p-5 shadow-lg shadow-black/20">
           <div className="text-[18px] font-semibold">Финансовая грамотность</div>
           <div className="mt-2 text-sm text-white/70">

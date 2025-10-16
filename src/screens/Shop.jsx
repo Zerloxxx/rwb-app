@@ -27,7 +27,7 @@ export default function Shop() {
         </div>
       </header>
 
-      <div className="px-5 pt-32">
+      <div className="px-5 pt-28">
         <div className="flex gap-2 overflow-x-auto pb-2">
           {TABS.map((t) => (
             <button key={t.key} onClick={() => setTab(t.key)} className={`whitespace-nowrap rounded-[12px] px-3 py-1.5 text-sm ${t.key === tab ? "bg-[#5d2efc]" : "bg-white/10 hover:bg-white/20"}`}>

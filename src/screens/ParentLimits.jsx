@@ -332,7 +332,7 @@ export default function ParentLimits() {
       </header>
 
       {/* Вкладки */}
-      <div className="px-5 pt-26">
+      <div className="px-5 pt-32">
         <div className="flex gap-2 overflow-x-auto pb-2">
           {tabs.map((tab) => (
             <button
@@ -352,7 +352,7 @@ export default function ParentLimits() {
       </div>
 
       {/* Контент */}
-      <main className="px-5 pt-4">
+      <main className="px-5 pt-6">
         {renderTabContent()}
       </main>
     </div>

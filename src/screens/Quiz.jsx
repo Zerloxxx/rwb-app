@@ -103,6 +103,9 @@ export default function Quiz() {
       triggerMission("weekly_quiz_streak", 1);
     }
     
+    // Триггерим ежедневную миссию прохождения теста
+    triggerMission("daily_quiz_complete", 1);
+    
     setShowResult(true);
     finishedOnceRef.current = true;
   };

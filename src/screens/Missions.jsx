@@ -77,12 +77,12 @@ export default function Missions() {
       </header>
 
       {/* Прогресс уровня */}
-        <div className="px-5 pt-26">
+        <div className="px-5 pt-36">
         <LevelProgress />
       </div>
 
       {/* Вкладки */}
-        <div className="px-5 pt-26">
+        <div className="px-5 pt-36">
         <div className="flex gap-2 overflow-x-auto pb-2">
           {TABS.map((tab) => (
             <button
@@ -101,7 +101,7 @@ export default function Missions() {
       </div>
 
       {/* Контент */}
-      <main className="px-5 pt-4">
+      <main className="px-5 pt-6">
         {getTabContent()}
       </main>
     </div>

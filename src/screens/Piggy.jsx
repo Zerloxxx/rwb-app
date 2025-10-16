@@ -4,6 +4,7 @@ import { loadPiggyState, savePiggyState } from "../utils/piggyStorage";
 import { useProfile } from "../context/ProfileContext";
 import { appendStoredTransaction } from "../utils/spendsStorage";
 import { useCoins } from "../context/CoinsContext";
+import { useMissions } from "../context/MissionsContext";
 
 const fmtRub = (value = 0) => Number(value || 0).toLocaleString("ru-RU") + " руб.";
 
@@ -290,6 +291,7 @@ export default function Piggy({ onBack, role = "child" }) {
   const [state, setState] = useState(loadPiggyState);
   const { unlockAchievement, gainXp, profile } = useProfile();
   const { ownedRewards, isOwned, activateReward, active } = useCoins();
+  const { triggerMission } = useMissions();
   const [designTab, setDesignTab] = useState("overview");
   const [designModal, setDesignModal] = useState(false);
   const [selectedSkin, setSelectedSkin] = useState(() => active?.penguinWear || "penguin_default");
@@ -522,6 +524,11 @@ export default function Piggy({ onBack, role = "child" }) {
         category: "other",
         note: `                "${transfer.piggy.name || "            "}"`,
       });
+      
+      // Триггерим миссию пополнения копилки
+      if (transfer.amount >= 100) {
+        triggerMission("daily_piggy_deposit", 1);
+      }
     }
 
     return transfer;
@@ -534,7 +541,10 @@ export default function Piggy({ onBack, role = "child" }) {
       if (newly) {
         appendStoredTransaction({ amount: 30, category: "bonus", note: "Награда: первое пополнение" });
       }
-      if (res.amount >= 100) gainXp(10);
+      if (res.amount >= 100) {
+        gainXp(10);
+        triggerMission("daily_piggy_deposit", 1);
+      }
     }
   };
 

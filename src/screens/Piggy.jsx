@@ -881,7 +881,7 @@ export default function Piggy({ onBack, role = "child" }) {
         </div>
       </header>
 
-      <section className="px-5 pt-32">
+      <section className="px-5 pt-30">
         <div 
           className={`relative min-h-[100px] rounded-[24px] ${getCurrentTopBackground()} px-6 py-6 pr-28 shadow-lg shadow-black/30`}
           style={getCurrentTopBackgroundStyle()}

@@ -127,7 +127,7 @@ export default function Quiz() {
         <div className="w-16" />
       </header>
 
-      <main className="space-y-4 p-5">
+      <main className="space-y-4 p-5 pt-30">
         {warningPerfectFarm ? (
           <div className="rounded-[12px] bg-yellow-500/10 p-3 text-xs text-yellow-200">
             Этот тест уже пройден на 100%. Повторное прохождение даёт урезанные монеты.

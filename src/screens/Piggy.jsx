@@ -522,7 +522,7 @@ export default function Piggy({ onBack, role = "child" }) {
       appendStoredTransaction({
         amount: transfer.amount,
         category: "other",
-        note: `                "${transfer.piggy.name || "            "}"`,
+        note: `Пополнение копилки "${transfer.piggy.name || "Без названия"}"`,
       });
       
       // Триггерим миссию пополнения копилки
